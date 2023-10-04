@@ -10,7 +10,6 @@ export default function CompartirPage() {
       video: {
         width: { ideal: 640 },
         height: { ideal: 480 },
-        facingMode: "enviroment",
       },
     };
     return await navigator.mediaDevices.getUserMedia({
