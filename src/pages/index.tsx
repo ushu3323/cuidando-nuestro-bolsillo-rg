@@ -15,7 +15,7 @@ export default function Home() {
       <main className="prose flex min-h-screen max-w-none flex-col items-center justify-center">
         <h1 className="mb-5">Hello world</h1>
 
-        <Button label="Hola mundo" />
+        <Button label="Hola mundo" loading={true} />
       </main>
     </>
   );
