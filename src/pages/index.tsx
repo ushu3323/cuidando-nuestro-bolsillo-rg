@@ -12,7 +12,9 @@ export default function Home() {
         />
         <link rel="icon" href="/favicon.svg" />
       </Head>
-      <main className="flex min-h-screen flex-col items-center justify-center">
+      <main className="prose flex min-h-screen max-w-none flex-col items-center justify-center">
+        <h1 className="mb-5">Hello world</h1>
+
         <Button label="Hola mundo" />
       </main>
     </>
