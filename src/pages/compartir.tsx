@@ -30,9 +30,6 @@ export default function CompartirPage() {
     if (mediaStream) {
       const video = videoRef.current;
       video.srcObject = mediaStream;
-      video.onloadedmetadata = () => {
-        void video.play();
-      };
     }
   }, [mediaStream]);
 
