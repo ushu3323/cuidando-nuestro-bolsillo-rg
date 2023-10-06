@@ -6,8 +6,10 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
     "./node_modules/primereact/**/*.{js,ts,jsx,tsx}",
   ],
+  corePlugins: {
+    preflight: false,
+  },
   theme: {
     extend: {},
   },
-  plugins: [require("@tailwindcss/typography")],
 } satisfies Config;
