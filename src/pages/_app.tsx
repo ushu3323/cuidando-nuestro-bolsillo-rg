@@ -2,9 +2,10 @@ import { type AppType } from "next/app";
 import { PrimeReactProvider } from "primereact/api";
 import { api } from "~/utils/api";
 
-import "~/styles/globals.css";
-
+import "primeicons/primeicons.css";
 import "primereact/resources/themes/lara-light-blue/theme.css";
+
+import "~/styles/globals.css";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (

@@ -1,5 +1,6 @@
 import Head from "next/head";
-import { Button } from "primereact/button";
+import ProductsTable from "../components/ProductsTable";
+import Header from "../components/layout/Header";
 
 export default function Home() {
   return (
@@ -12,10 +13,9 @@ export default function Home() {
         />
         <link rel="icon" href="/favicon.svg" />
       </Head>
-      <main className="prose flex min-h-screen max-w-none flex-col items-center justify-center">
-        <h1 className="mb-5">Hello world</h1>
-
-        <Button label="Hola mundo" loading={true} />
+      <main className="relative min-h-screen max-w-none flex-col items-center justify-center">
+        <Header />
+        <ProductsTable />
       </main>
     </>
   );
