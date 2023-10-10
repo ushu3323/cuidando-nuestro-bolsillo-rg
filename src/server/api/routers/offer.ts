@@ -6,20 +6,52 @@ export const offerRouter = createTRPCRouter({
   create: publicProcedure
     .input(
       z.object({
+        code: z
+          .string()
+          .length(13, {
+            message: "Debe contener 13 caracteres",
+          })
+          .pipe(
+            z
+              .string()
+              .regex(/[0-9]+/g, { message: "Solo se permiten numeros" }),
+          ),
         name: z
           .string()
-          .nonempty({ message: "El nombre no debe quedar vacio" }),
-        price: z.number().positive({ message: "El precio debe ser positivo" }),
-        commerce: z.object({
-          name: z.string().nonempty(),
-        }),
+          .nonempty({ message: "No debe quedar vacio" })
+          .max(40)
+          .pipe(
+            z.string().regex(/^[a-zA-Z0-9 ]+$/, {
+              message: "Solo se aceptan letras, numeros y espacios",
+            }),
+          )
+          .transform((v) =>
+            v
+              .split(/ +/)
+              .map((v) => v.at(0)?.toUpperCase() + v.substring(1))
+              .join(" "),
+          ),
+        price: z
+          .number({ invalid_type_error: "Debe ingresar el precio" })
+          .positive({ message: "Ingrese un precio valido" }),
+        commerce_name: z
+          .string()
+          .nonempty({ message: "No debe quedar vacio" })
+          .max(40)
+          .pipe(
+            z.string().regex(/^[a-zA-Z0-9 ]+$/, {
+              message: "Solo se aceptan letras, numeros y espacios",
+            }),
+          )
+          .transform((v) =>
+            v
+              .split(/ +/)
+              .map((v) => v.at(0)?.toUpperCase() + v.substring(1))
+              .join(" "),
+          ),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      input.commerce.name = input.commerce.name
-        .split(/ +/)
-        .map((v) => v.at(0)?.toUpperCase() + v.substring(1))
-        .join(" ");
       return ctx.db.offer.create({
         data: {
           price: new Prisma.Decimal(input.price),
@@ -31,9 +63,9 @@ export const offerRouter = createTRPCRouter({
           },
           commerce: {
             connectOrCreate: {
-              where: { name: input.commerce.name },
+              where: { name: input.commerce_name },
               create: {
-                name: input.commerce.name,
+                name: input.commerce_name,
               },
             },
           },
