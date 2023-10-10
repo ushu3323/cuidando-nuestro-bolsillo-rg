@@ -8,7 +8,7 @@ export default function Header() {
   const path = usePathname();
   const router = useRouter();
   return (
-    <header className="sticky top-0 flex items-center justify-between px-4 py-2 shadow">
+    <header className="sticky top-0 z-40 flex items-center justify-between bg-white px-4 py-2 shadow">
       <Link href="/" className="text-lg font-bold text-black no-underline">
         Cuidando nuestro bolsillo
       </Link>
