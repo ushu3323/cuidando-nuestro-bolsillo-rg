@@ -1,22 +1,23 @@
-import { TRPCClientError } from "@trpc/client";
+import { type TRPCClientError } from "@trpc/client";
 import { useFormik } from "formik";
 import { useRouter } from "next/router";
+import { PrimeIcons } from "primereact/api";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { InputNumber } from "primereact/inputnumber";
 import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
 import { classNames } from "primereact/utils";
-import { useRef } from "react";
-import { RouterInputs, api } from "~/utils/api";
+import { useRef, useState } from "react";
+import { api, type RouterInputs } from "~/utils/api";
+import ScanBarcodeDialog from "../../components/ScanBarcodeDialog";
 import Header from "../../components/layout/Header";
-import { AppRouter } from "../../server/api/root";
-
-const barcodeScanViewId = "barcode-scan-view";
+import { type AppRouter } from "../../server/api/root";
 
 export default function NewOfferPage() {
   const router = useRouter();
   const toast = useRef<Toast>(null);
+  const [scanDialogVisible, setScanDialogVisible] = useState(false);
 
   const { mutateAsync, isLoading, error } = api.offer.create.useMutation({
     cacheTime: 0,
@@ -93,33 +94,58 @@ export default function NewOfferPage() {
   };
 
   return (
-    <main className="flex h-full min-h-screen flex-col">
+    <main className="flex min-h-screen flex-col">
+      <ScanBarcodeDialog
+        visible={scanDialogVisible}
+        onHide={() => setScanDialogVisible(false)}
+        onSuccess={(text) =>
+          void formik
+            .setFieldValue("code", text)
+            .then(() => setScanDialogVisible(false))
+        }
+      ></ScanBarcodeDialog>
       <Header />
       <Toast ref={toast} />
       <div className="flex w-full grow items-center justify-center">
-        <Card
-          title="Publicar oferta"
-          className="w-full border-2 border-solid border-zinc-100 shadow-none sm:w-96 sm:shadow-xl"
-        >
-          <div className={barcodeScanViewId}></div>
-          <form onSubmit={formik.handleSubmit} className="mt-2">
-            <div className="mb-6 flex flex-col gap-4">
+        <form onSubmit={formik.handleSubmit} className="mt-2">
+          <Card
+            title="Publicar oferta"
+            className="w-full border-2 border-solid border-zinc-100 shadow-none sm:w-96 sm:shadow-xl"
+            footer={
+              <Button
+                label="Enviar"
+                type="submit"
+                className="w-full"
+                loading={isLoading}
+              />
+            }
+          >
+            <div className="flex flex-col gap-4">
               <div className="">
-                <span className="p-float-label">
-                  <InputText
-                    id="code"
-                    name="code"
-                    className={classNames("w-full", {
-                      "p-invalid": isFieldInvalid("code"),
-                    })}
-                    value={formik.values.code}
-                    keyfilter="int"
-                    maxLength={13}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                  />
-                  <label htmlFor="code">Codigo</label>
-                </span>
+                <div className="p-inputgroup flex-1">
+                  <span className="p-float-label">
+                    <InputText
+                      id="code"
+                      name="code"
+                      className={classNames("w-full", {
+                        "p-invalid": isFieldInvalid("code"),
+                      })}
+                      value={formik.values.code}
+                      keyfilter="int"
+                      maxLength={13}
+                      onChange={formik.handleChange}
+                      onBlur={formik.handleBlur}
+                    />
+                    <label htmlFor="code">Codigo</label>
+                  </span>
+                  <Button
+                    label="Escanear"
+                    type="button"
+                    size="small"
+                    icon={PrimeIcons.CAMERA}
+                    onClick={() => setScanDialogVisible(true)}
+                  ></Button>
+                </div>
                 {getFieldErrorMessages("code")}
               </div>
               <div>
@@ -173,14 +199,8 @@ export default function NewOfferPage() {
                 {getFieldErrorMessages("commerce_name")}
               </div>
             </div>
-            <Button
-              label="Enviar"
-              type="submit"
-              className="w-full"
-              loading={isLoading}
-            />
-          </form>
-        </Card>
+          </Card>
+        </form>
       </div>
     </main>
   );
