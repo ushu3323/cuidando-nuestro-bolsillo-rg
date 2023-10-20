@@ -168,13 +168,11 @@ export function NewOfferForm({
                 className={classNames("w-full", {
                   "p-invalid": isFieldInvalid("brandId"),
                 })}
-                disabled={values.productId.length == 0 || brands?.length == 0}
-                options={
-                  brands?.length ? brands : [{ id: "null", name: "Generica" }]
-                }
+                disabled={values.productId.length == 0 || brands?.length == 1}
+                options={brands}
                 optionLabel="name"
                 optionValue="id"
-                value={brands?.length == 0 ? "null" : values.brandId}
+                value={brands?.length == 1 ? brands[0]?.id : values.brandId}
                 onChange={handleChange}
                 filter
               />
