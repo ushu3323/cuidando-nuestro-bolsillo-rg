@@ -10,25 +10,53 @@ datasource db {
     url      = env("DATABASE_URL")
 }
 
+model Category {
+    id      String    @id @default(uuid())
+    name    String    @unique
+    product Product[]
+}
+
+model Brand {
+    id              String           @id @default(uuid())
+    name            String           @unique
+    brandedProducts BrandedProduct[]
+}
+
 model Product {
     id              String           @id @default(uuid())
     name            String           @unique
-    description     String
-    ProductInstance ProductInstance?
+    categoryId      String
+    category        Category         @relation(fields: [categoryId], references: [id])
+    brandedProducts BrandedProduct[]
 }
 
-model ProductInstance {
-    productId  String   @unique
-    product    Product  @relation(fields: [productId], references: [id])
-    locationId String   @unique
-    location   Location @relation(fields: [locationId], references: [id], onDelete: Restrict)
-    price      Decimal
+model BrandedProduct {
+    id        String  @id @default(uuid())
+    productId String
+    product   Product @relation(fields: [productId], references: [id])
+    brandId   String
+    brand     Brand   @relation(fields: [brandId], references: [id])
+    offers    Offer[]
 
-    createdAt DateTime @default(now())
+    @@unique([productId, brandId])
 }
 
-model Location {
-    id              String           @id @default(uuid())
-    name            String           @unique
-    ProductInstance ProductInstance?
+// Oferta
+model Offer {
+    id               String         @id @default(uuid())
+    brandedProductId String
+    brandedProduct   BrandedProduct @relation(fields: [brandedProductId], references: [id])
+    commerceId       String
+    commerce         Commerce       @relation(fields: [commerceId], references: [id], onDelete: Restrict)
+    price            Decimal        @db.Decimal(20, 2)
+
+    publishDate DateTime @default(now())
+}
+
+model Commerce {
+    id           String  @id @default(uuid())
+    name         String
+    street       String
+    observations String?
+    offers       Offer[]
 }
