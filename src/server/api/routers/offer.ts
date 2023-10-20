@@ -9,15 +9,15 @@ export const offerRouter = createTRPCRouter({
         productId: z
           .string()
           .nonempty({ message: "El producto no debe quedar vacio" })
-          .uuid({}),
+          .pipe(z.string().uuid()),
         brandId: z
           .string()
           .nonempty({ message: "La marca del producto no debe quedar vacia" })
-          .uuid(),
+          .pipe(z.string().uuid()),
         commerceId: z
           .string()
           .nonempty({ message: "El comercio no debe quedar vacio" })
-          .uuid(),
+          .pipe(z.string().uuid()),
         price: z
           .number({ invalid_type_error: "Debe ingresar el precio" })
           .positive({ message: "Ingrese un precio valido" }),
