@@ -6,69 +6,31 @@ export const offerRouter = createTRPCRouter({
   create: publicProcedure
     .input(
       z.object({
-        code: z
-          .string()
-          .length(13, {
-            message: "Debe contener 13 caracteres",
-          })
-          .pipe(
-            z
-              .string()
-              .regex(/[0-9]+/g, { message: "Solo se permiten numeros" }),
-          ),
-        name: z
-          .string()
-          .nonempty({ message: "No debe quedar vacio" })
-          .max(40)
-          .pipe(
-            z.string().regex(/^[a-zA-Z0-9 ]+$/, {
-              message: "Solo se aceptan letras, numeros y espacios",
-            }),
-          )
-          .transform((v) =>
-            v
-              .split(/ +/)
-              .map((v) => v.at(0)?.toUpperCase() + v.substring(1))
-              .join(" "),
-          ),
+        productId: z.string().uuid({ message: "El producto es requerido" }),
+        brandId: z.string().uuid({ message: "El producto es requerido" }),
+        commerceId: z.string().uuid({ message: "El comercio es requerido" }),
         price: z
           .number({ invalid_type_error: "Debe ingresar el precio" })
           .positive({ message: "Ingrese un precio valido" }),
-        commerce_name: z
-          .string()
-          .nonempty({ message: "No debe quedar vacio" })
-          .max(40)
-          .pipe(
-            z.string().regex(/^[a-zA-Z0-9 ]+$/, {
-              message: "Solo se aceptan letras, numeros y espacios",
-            }),
-          )
-          .transform((v) =>
-            v
-              .split(/ +/)
-              .map((v) => v.at(0)?.toUpperCase() + v.substring(1))
-              .join(" "),
-          ),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       return ctx.db.offer.create({
         data: {
-          price: new Prisma.Decimal(input.price),
-          product: {
-            connectOrCreate: {
-              where: { name: input.name },
-              create: { name: input.name },
-            },
-          },
-          commerce: {
-            connectOrCreate: {
-              where: { name: input.commerce_name },
-              create: {
-                name: input.commerce_name,
+          brandedProduct: {
+            connect: {
+              productId_brandId: {
+                productId: input.productId,
+                brandId: input.brandId,
               },
             },
           },
+          commerce: {
+            connect: {
+              id: input.commerceId,
+            },
+          },
+          price: new Prisma.Decimal(input.price),
         },
       });
     }),
@@ -76,23 +38,25 @@ export const offerRouter = createTRPCRouter({
     return ctx.db.offer.findMany({
       select: {
         id: true,
-        product: true,
+        brandedProduct: {
+          include: { brand: true, product: true },
+        },
         commerce: true,
         price: true,
         publishDate: true,
       },
     });
   }),
-  getForProduct: publicProcedure
-    .input(z.object({ productId: z.string().uuid() }))
+  getByBrandedProduct: publicProcedure
+    .input(z.object({ brandedProductId: z.string().uuid() }))
     .query(({ ctx, input }) => {
       return ctx.db.offer.findMany({
         where: {
-          productId: input.productId,
+          brandedProduct: { id: input.brandedProductId },
         },
         select: {
           id: true,
-          product: true,
+          brandedProduct: true,
           commerce: true,
           price: true,
           publishDate: true,

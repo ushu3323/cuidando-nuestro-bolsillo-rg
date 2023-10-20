@@ -1,206 +1,93 @@
+"strict";
 import { type TRPCClientError } from "@trpc/client";
-import { useFormik } from "formik";
+import { Formik, type FormikHelpers } from "formik";
 import { useRouter } from "next/router";
-import { PrimeIcons } from "primereact/api";
-import { Button } from "primereact/button";
-import { Card } from "primereact/card";
-import { InputNumber } from "primereact/inputnumber";
-import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
-import { classNames } from "primereact/utils";
-import { useRef, useState } from "react";
-import { api, type RouterInputs } from "~/utils/api";
-import ScanBarcodeDialog from "../../components/ScanBarcodeDialog";
-import Header from "../../components/layout/Header";
-import { type AppRouter } from "../../server/api/root";
+import { useRef } from "react";
+import {
+  NewOfferForm,
+  type NewOfferFormProps,
+} from "~/components/NewOfferForm";
+import { type AppRouter } from "~/server/api/root";
+import { api } from "~/utils/api";
 
 export default function NewOfferPage() {
   const router = useRouter();
   const toast = useRef<Toast>(null);
-  const [scanDialogVisible, setScanDialogVisible] = useState(false);
 
-  const { mutateAsync, isLoading, error } = api.offer.create.useMutation({
+  const { mutateAsync, error } = api.offer.create.useMutation({
     cacheTime: 0,
   });
+
   const fieldErrors = error?.data?.zodError?.fieldErrors;
 
-  const formik = useFormik({
-    initialValues: {
-      code: "",
-      name: "",
-      price: 0,
-      commerce_name: "",
-    },
-    validateOnChange: false,
-    validateOnBlur: false,
-    validateOnMount: false,
-    onSubmit: (values, { setTouched, setErrors }) =>
-      mutateAsync({
-        code: values.code,
-        name: values.name,
-        price: values.price,
-        commerce_name: values.commerce_name,
+  const initialValues: NewOfferFormProps = {
+    brandId: "",
+    productId: "",
+    commerceId: "",
+    price: 0,
+  };
+
+  const handleOnSubmit = (
+    values: NewOfferFormProps,
+    { setTouched, setErrors }: FormikHelpers<NewOfferFormProps>,
+  ) =>
+    mutateAsync({
+      productId: values.productId,
+      brandId: values.brandId,
+      commerceId: values.commerceId,
+      price: values.price,
+    })
+      .then((offer) => {
+        console.log(offer);
+        void router.push("/");
       })
-        .then((offer) => {
-          console.log(offer);
-          void router.push("/");
-        })
-        .catch((err: TRPCClientError<AppRouter>) => {
-          const fieldErrors = err?.data?.zodError?.fieldErrors;
-          if (fieldErrors) {
-            void setTouched({
-              code: false,
-              name: false,
-              price: false,
-              commerce_name: false,
-            });
-            void setErrors({
-              code: fieldErrors.code?.join("\n"),
-              name: fieldErrors.name?.join("\n"),
-              price: fieldErrors.price?.join("\n"),
-              commerce_name: fieldErrors.commerce_name?.join("\n"),
-            });
-            return;
-          }
-          toast.current?.show({
-            severity: "error",
-            summary: "Error",
-            detail: error?.message,
+      .catch((err: TRPCClientError<AppRouter>) => {
+        const fieldErrors = err?.data?.zodError?.fieldErrors;
+        if (fieldErrors) {
+          console.log("Catch field errors on mutation", fieldErrors);
+          void setTouched({
+            productId: false,
+            brandId: false,
+            commerceId: false,
+            price: false,
           });
-        }),
-  });
-
-  const getFieldErrorMessages = (
-    name: keyof RouterInputs["offer"]["create"],
-  ) => {
-    const errors = fieldErrors?.[name];
-    if (errors && !formik.touched[name]) {
-      return (
-        <div className="p-error mb-3">
-          {errors.map((error, i) => (
-            <small key={i} className="block p-1">
-              {error}
-            </small>
-          ))}
-        </div>
-      );
-    }
-    return <small className="p-error">&nbsp;</small>;
-  };
-
-  const isFieldInvalid = (name: keyof RouterInputs["offer"]["create"]) => {
-    const errors = fieldErrors?.[name];
-    return errors && !formik.touched[name] ? true : false;
-  };
+          void setErrors({
+            productId: fieldErrors.productId?.join("\n"),
+            brandId: fieldErrors.brandId?.join("\n"),
+            commerceId: fieldErrors.commerceId?.join("\n"),
+            price: fieldErrors.price?.join("\n"),
+          });
+          return;
+        }
+        toast.current?.show({
+          severity: "error",
+          summary: "Error",
+          detail: error?.message,
+        });
+      });
 
   return (
     <main className="flex min-h-screen flex-col">
-      <ScanBarcodeDialog
-        visible={scanDialogVisible}
-        onHide={() => setScanDialogVisible(false)}
-        onSuccess={(text) =>
-          void formik
-            .setFieldValue("code", text)
-            .then(() => setScanDialogVisible(false))
-        }
-      ></ScanBarcodeDialog>
-      <Header />
       <Toast ref={toast} />
-      <div className="flex w-full grow items-center justify-center">
-        <form onSubmit={formik.handleSubmit} className="mt-2">
-          <Card
-            title="Publicar oferta"
-            className="w-full border-2 border-solid border-zinc-100 shadow-none sm:w-96 sm:shadow-xl"
-            footer={
-              <Button
-                label="Enviar"
-                type="submit"
-                className="w-full"
-                loading={isLoading}
-              />
+      <div className="flex grow items-stretch justify-center sm:items-center">
+        <Formik
+          initialValues={initialValues}
+          validate={(values) => {
+            const errors: Record<string, string | undefined> = {};
+            console.log(values);
+            if (!values.productId) {
+              errors.categoryId = "Seleccione un producto";
             }
-          >
-            <div className="flex flex-col gap-4">
-              <div className="">
-                <div className="p-inputgroup flex-1">
-                  <span className="p-float-label">
-                    <InputText
-                      id="code"
-                      name="code"
-                      className={classNames("w-full", {
-                        "p-invalid": isFieldInvalid("code"),
-                      })}
-                      value={formik.values.code}
-                      keyfilter="int"
-                      maxLength={13}
-                      onChange={formik.handleChange}
-                      onBlur={formik.handleBlur}
-                    />
-                    <label htmlFor="code">Codigo</label>
-                  </span>
-                  <Button
-                    label="Escanear"
-                    type="button"
-                    size="small"
-                    icon={PrimeIcons.CAMERA}
-                    onClick={() => setScanDialogVisible(true)}
-                  ></Button>
-                </div>
-                {getFieldErrorMessages("code")}
-              </div>
-              <div>
-                <span className="p-float-label">
-                  <InputText
-                    id="name"
-                    name="name"
-                    className={classNames("w-full", {
-                      "p-invalid": isFieldInvalid("name"),
-                    })}
-                    value={formik.values.name}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                  />
-                  <label htmlFor="name">Nombre</label>
-                </span>
-                {getFieldErrorMessages("name")}
-              </div>
-              <div>
-                <span className="p-float-label">
-                  <InputNumber
-                    inputId="price"
-                    name="price"
-                    className={classNames("w-full", {
-                      "p-invalid": isFieldInvalid("price"),
-                    })}
-                    prefix="$"
-                    minFractionDigits={2}
-                    maxFractionDigits={2}
-                    value={formik.values.price > 0 ? formik.values.price : null}
-                    onValueChange={formik.handleChange}
-                  />
-                  <label htmlFor="price">Precio</label>
-                </span>
-                {getFieldErrorMessages("price")}
-              </div>
-              <div>
-                <span className="p-float-label">
-                  <InputText
-                    id="commerce_name"
-                    name="commerce_name"
-                    className={classNames("w-full", {
-                      "p-invalid": isFieldInvalid("commerce_name"),
-                    })}
-                    value={formik.values.commerce_name}
-                    onChange={formik.handleChange}
-                    onBlur={formik.handleBlur}
-                  />
-                  <label htmlFor="commerce_name">Comercio</label>
-                </span>
-                {getFieldErrorMessages("commerce_name")}
-              </div>
-            </div>
-          </Card>
-        </form>
+            return errors;
+          }}
+          onSubmit={handleOnSubmit}
+          validateOnChange={false}
+          validateOnBlur={false}
+          validateOnMount={false}
+        >
+          <NewOfferForm />
+        </Formik>
       </div>
     </main>
   );
