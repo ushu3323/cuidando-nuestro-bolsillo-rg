@@ -1,6 +1,5 @@
-"strict";
 import { type TRPCClientError } from "@trpc/client";
-import { Formik, type FormikHelpers } from "formik";
+import { type FormikHelpers } from "formik";
 import { useRouter } from "next/router";
 import { Toast } from "primereact/toast";
 import { useRef } from "react";
@@ -19,18 +18,9 @@ export default function NewOfferPage() {
     cacheTime: 0,
   });
 
-  const fieldErrors = error?.data?.zodError?.fieldErrors;
-
-  const initialValues: NewOfferFormProps = {
-    brandId: "",
-    productId: "",
-    commerceId: "",
-    price: 0,
-  };
-
   const handleOnSubmit = (
     values: NewOfferFormProps,
-    { setTouched, setErrors }: FormikHelpers<NewOfferFormProps>,
+    { setErrors }: FormikHelpers<NewOfferFormProps>,
   ) =>
     mutateAsync({
       productId: values.productId,
@@ -46,12 +36,6 @@ export default function NewOfferPage() {
         const fieldErrors = err?.data?.zodError?.fieldErrors;
         if (fieldErrors) {
           console.log("Catch field errors on mutation", fieldErrors);
-          void setTouched({
-            productId: false,
-            brandId: false,
-            commerceId: false,
-            price: false,
-          });
           void setErrors({
             productId: fieldErrors.productId?.join("\n"),
             brandId: fieldErrors.brandId?.join("\n"),
@@ -71,23 +55,7 @@ export default function NewOfferPage() {
     <main className="flex min-h-screen flex-col">
       <Toast ref={toast} />
       <div className="flex grow items-stretch justify-center sm:items-center">
-        <Formik
-          initialValues={initialValues}
-          validate={(values) => {
-            const errors: Record<string, string | undefined> = {};
-            console.log(values);
-            if (!values.productId) {
-              errors.categoryId = "Seleccione un producto";
-            }
-            return errors;
-          }}
-          onSubmit={handleOnSubmit}
-          validateOnChange={false}
-          validateOnBlur={false}
-          validateOnMount={false}
-        >
-          <NewOfferForm />
-        </Formik>
+        <NewOfferForm onSubmit={handleOnSubmit} />
       </div>
     </main>
   );

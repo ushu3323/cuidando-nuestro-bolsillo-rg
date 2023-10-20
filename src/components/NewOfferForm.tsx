@@ -1,12 +1,34 @@
-import { useFormikContext } from "formik";
+import { useFormik, type FormikHelpers } from "formik";
 import { useRouter } from "next/navigation";
 import { PrimeIcons } from "primereact/api";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
-import { Dropdown, DropdownProps } from "primereact/dropdown";
+import { Dropdown, type DropdownProps } from "primereact/dropdown";
 import { InputNumber } from "primereact/inputnumber";
 import { classNames } from "primereact/utils";
-import { RouterOutputs, api } from "../utils/api";
+import { api, type RouterOutputs } from "../utils/api";
+
+// commerceId Dropdown templates
+const commerceOptionTemplate = (
+  option: RouterOutputs["commerce"]["getAll"][number],
+) => (
+  <div>
+    {option.name} - {option.street}
+    <div className="opacity-70">&quot;{option.observations}&quot;</div>
+  </div>
+);
+const selectedCommerceTemplate = (
+  option: RouterOutputs["commerce"]["getAll"][number],
+  props: DropdownProps,
+) =>
+  option ? (
+    <div>
+      {option.name} - {option.street}
+      <div className="opacity-70">&quot;{option.observations}&quot;</div>
+    </div>
+  ) : (
+    <div>{props.placeholder ?? "&nbsp;"}</div>
+  );
 
 export interface NewOfferFormProps {
   productId: string;
@@ -15,14 +37,39 @@ export interface NewOfferFormProps {
   price: number;
 }
 
-export function NewOfferForm() {
+export function NewOfferForm({
+  onSubmit,
+}: {
+  onSubmit: (
+    values: NewOfferFormProps,
+    formikHelpers: FormikHelpers<NewOfferFormProps>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ) => void | Promise<any>;
+}) {
   const router = useRouter();
   const { values, errors, touched, handleSubmit, handleChange, isSubmitting } =
-    useFormikContext<NewOfferFormProps>();
+    useFormik<NewOfferFormProps>({
+      initialValues: {
+        productId: "",
+        brandId: "",
+        commerceId: "",
+        price: 0,
+      },
+      validate(formikValues) {
+        const formikErrors: Partial<Record<keyof NewOfferFormProps, string>> =
+          {};
+        if (formikValues.productId.length == 0) {
+          formikErrors.productId = "Seleccione un producto";
+        }
 
-  // const { data: categories } = api.category.getAll.useQuery();
+        return formikErrors;
+      },
+      onSubmit: onSubmit,
+      validateOnBlur: false,
+      validateOnChange: false,
+    });
+
   const { data: commerces } = api.commerce.getAll.useQuery();
-
   const { data: products } = api.product.getAll.useQuery();
   const { data: brands } = api.product.getProductBrands.useQuery(
     { productId: values.productId },
@@ -34,10 +81,10 @@ export function NewOfferForm() {
     opts: { ignoreTouched: boolean } = { ignoreTouched: false },
   ) => {
     const error = errors[name];
-    if (error && (opts.ignoreTouched || !touched[name])) {
+    if (isFieldInvalid(name, { ignoreTouched: opts.ignoreTouched })) {
       return (
         <div className="p-error mb-3">
-          {error.split("\n").map((error, i) => (
+          {error!.split("\n").map((error, i) => (
             <small key={i} className="block p-1">
               {error}
             </small>
@@ -52,33 +99,8 @@ export function NewOfferForm() {
     name: keyof NewOfferFormProps,
     opts: { ignoreTouched: boolean } = { ignoreTouched: false },
   ) => {
-    const error = errors[name];
-    return error && (opts.ignoreTouched || !touched[name]) ? true : false;
+    return !!(errors[name] && (opts.ignoreTouched || touched[name]));
   };
-
-  // commerceId Dropdown templates
-  const commerceOptionTemplate = (
-    option: RouterOutputs["commerce"]["getAll"][number],
-  ) => (
-    <div>
-      <div>
-        {option.name} - {option.street}
-      </div>
-      <div className="opacity-70">&quot;{option.observations}&quot;</div>
-    </div>
-  );
-  const selectedCommerceTemplate = (
-    option: RouterOutputs["commerce"]["getAll"][number],
-    props: DropdownProps,
-  ) =>
-    option ? (
-      <div>
-        {option.name} - {option.street}
-        <div className="opacity-70">&quot;{option.observations}&quot;</div>
-      </div>
-    ) : (
-      <div>{props.placeholder ?? "&nbsp;"}</div>
-    );
 
   return (
     <form
