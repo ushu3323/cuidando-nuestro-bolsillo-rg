@@ -6,9 +6,18 @@ export const offerRouter = createTRPCRouter({
   create: publicProcedure
     .input(
       z.object({
-        productId: z.string().uuid({ message: "El producto es requerido" }),
-        brandId: z.string().uuid({ message: "El producto es requerido" }),
-        commerceId: z.string().uuid({ message: "El comercio es requerido" }),
+        productId: z
+          .string()
+          .nonempty({ message: "El producto no debe quedar vacio" })
+          .uuid({}),
+        brandId: z
+          .string()
+          .nonempty({ message: "La marca del producto no debe quedar vacia" })
+          .uuid(),
+        commerceId: z
+          .string()
+          .nonempty({ message: "El comercio no debe quedar vacio" })
+          .uuid(),
         price: z
           .number({ invalid_type_error: "Debe ingresar el precio" })
           .positive({ message: "Ingrese un precio valido" }),
