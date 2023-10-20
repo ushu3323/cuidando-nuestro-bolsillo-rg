@@ -47,27 +47,33 @@ export function NewOfferForm({
   ) => void | Promise<any>;
 }) {
   const router = useRouter();
-  const { values, errors, touched, handleSubmit, handleChange, isSubmitting } =
-    useFormik<NewOfferFormProps>({
-      initialValues: {
-        productId: "",
-        brandId: "",
-        commerceId: "",
-        price: 0,
-      },
-      validate(formikValues) {
-        const formikErrors: Partial<Record<keyof NewOfferFormProps, string>> =
-          {};
-        if (formikValues.productId.length == 0) {
-          formikErrors.productId = "Seleccione un producto";
-        }
+  const {
+    values,
+    errors,
+    touched,
+    handleSubmit,
+    handleChange,
+    setFieldValue,
+    isSubmitting,
+  } = useFormik<NewOfferFormProps>({
+    initialValues: {
+      productId: "",
+      brandId: "",
+      commerceId: "",
+      price: 0,
+    },
+    validate(formikValues) {
+      const formikErrors: Partial<Record<keyof NewOfferFormProps, string>> = {};
+      if (formikValues.productId.length == 0) {
+        formikErrors.productId = "Seleccione un producto";
+      }
 
-        return formikErrors;
-      },
-      onSubmit: onSubmit,
-      validateOnBlur: false,
-      validateOnChange: false,
-    });
+      return formikErrors;
+    },
+    onSubmit: onSubmit,
+    validateOnBlur: false,
+    validateOnChange: false,
+  });
 
   const { data: commerces } = api.commerce.getAll.useQuery();
   const { data: products } = api.product.getAll.useQuery();
@@ -101,6 +107,11 @@ export function NewOfferForm({
   ) => {
     return !!(errors[name] && (opts.ignoreTouched || touched[name]));
   };
+
+  const firstBrand = brands?.at(0);
+  if (brands && firstBrand && values.brandId !== firstBrand.id) {
+    void setFieldValue("brandId", firstBrand.id);
+  }
 
   return (
     <form
@@ -172,7 +183,7 @@ export function NewOfferForm({
                 options={brands}
                 optionLabel="name"
                 optionValue="id"
-                value={brands?.length == 1 ? brands[0]?.id : values.brandId}
+                value={values.brandId}
                 onChange={handleChange}
                 filter
               />
