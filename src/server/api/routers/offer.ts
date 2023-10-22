@@ -56,6 +56,23 @@ export const offerRouter = createTRPCRouter({
       },
     });
   }),
+  getDaily: publicProcedure.query(({ ctx }) => {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    return ctx.db.offer.findMany({
+      orderBy: [{ price: "asc" }, { publishDate: "desc" }],
+      distinct: "brandedProductId",
+      select: {
+        id: true,
+        brandedProduct: {
+          select: { id: true, brand: true, product: true },
+        },
+        commerce: true,
+        price: true,
+        publishDate: true,
+      },
+    });
+  }),
   getByBrandedProduct: publicProcedure
     .input(z.object({ brandedProductId: z.string().uuid() }))
     .query(({ ctx, input }) => {
@@ -65,7 +82,9 @@ export const offerRouter = createTRPCRouter({
         },
         select: {
           id: true,
-          brandedProduct: true,
+          brandedProduct: {
+            select: { brand: true, product: true },
+          },
           commerce: true,
           price: true,
           publishDate: true,
