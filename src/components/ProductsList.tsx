@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { DataScroller } from "primereact/datascroller";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { Ripple } from "primereact/ripple";
@@ -8,7 +9,10 @@ export default function ProductsList() {
 
   const offerItemTemplate = (o: RouterOutputs["offer"]["getDaily"][number]) => {
     return (
-      <article className="p-ripple p-card select-none bg-gray-100 px-4 py-2 shadow-md">
+      <Link
+        href={`/product/${o.brandedProduct.id}/offers`}
+        className="p-ripple p-card block select-none px-4 py-2 no-underline"
+      >
         <div className="flex items-center justify-between">
           <div>
             <div className="inline-flex items-center opacity-70">
@@ -25,7 +29,7 @@ export default function ProductsList() {
           <span className="font-bold">${o.price.toFixed(2)}</span>
         </div>
         <Ripple />
-      </article>
+      </Link>
     );
   };
 
