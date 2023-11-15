@@ -9,7 +9,7 @@ import "~/styles/globals.css";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
-    <PrimeReactProvider>
+    <PrimeReactProvider value={{ ripple: true }}>
       <Component {...pageProps} />
     </PrimeReactProvider>
   );

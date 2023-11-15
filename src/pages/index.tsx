@@ -1,5 +1,5 @@
 import Head from "next/head";
-import ProductsTable from "../components/ProductsTable";
+import ProductsList from "../components/ProductsList";
 import Header from "../components/layout/Header";
 
 export default function Home() {
@@ -13,9 +13,9 @@ export default function Home() {
         />
         <link rel="icon" href="/favicon.svg" />
       </Head>
-      <main className="relative min-h-screen max-w-none flex-col items-center justify-center">
+      <main className="relative flex min-h-[100dvh] max-w-none flex-col items-stretch">
         <Header />
-        <ProductsTable />
+        <ProductsList />
       </main>
     </>
   );

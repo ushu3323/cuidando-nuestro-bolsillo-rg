@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 export const productRouter = createTRPCRouter({
@@ -21,4 +22,25 @@ export const productRouter = createTRPCRouter({
       brands: brandedProducts.map((bp) => bp.brand),
     }));
   }),
+  getBrandedWithOffers: publicProcedure
+    .input(z.object({ brandedProductId: z.string().uuid() }))
+    .query(({ ctx, input }) => {
+      return ctx.db.brandedProduct.findUnique({
+        where: {
+          id: input.brandedProductId,
+        },
+        select: {
+          product: true,
+          brand: true,
+          offers: {
+            select: {
+              id: true,
+              price: true,
+              commerce: true,
+              publishDate: true,
+            },
+          },
+        },
+      });
+    }),
 });
