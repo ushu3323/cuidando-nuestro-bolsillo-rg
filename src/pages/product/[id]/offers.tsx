@@ -9,13 +9,9 @@ import { api } from "~/utils/api";
 export default function ProductOffers() {
   const router = useRouter();
 
-  const {
-    data: brandedProduct,
-    isLoading,
-    error,
-  } = api.product.getBrandedWithOffers.useQuery(
+  const { data, isLoading, error } = api.offer.getByProduct.useQuery(
     {
-      brandedProductId: router.query.id as string,
+      productId: router.query.id as string,
     },
     {
       retry(failureCount, error) {
@@ -47,12 +43,10 @@ export default function ProductOffers() {
       break;
   }
 
-  const offers = brandedProduct?.offers.map((offer) => ({
-    ...offer,
-    price: offer.price.toNumber(),
-  }));
+  const product = data!;
 
-  type Offer = NonNullable<typeof offers>[number];
+  type Offer = NonNullable<typeof product>["offers"][number];
+
   return (
     <div className="m-auto flex h-screen w-full flex-col sm:p-4 md:w-4/5 lg:max-w-2xl">
       <div className="flex flex-col">
@@ -66,15 +60,13 @@ export default function ProductOffers() {
           ></Button>
         </div>
         <div className="px-5 sm:p-0">
-          <h1 className="text-2xl">
-            {brandedProduct?.product.name} - {brandedProduct?.brand.name}
-          </h1>
+          <h1 className="text-2xl">{product.name}</h1>
           <p className="opacity-60">Mostrando los ultimos precios publicados</p>
         </div>
       </div>
       <div className="overflow-y-scroll">
         <DataTable
-          value={offers}
+          value={product.offers}
           sortField="price"
           sortOrder={1}
           removableSort
@@ -108,9 +100,7 @@ export default function ProductOffers() {
             header="Fecha"
             align="right"
             bodyClassName="whitespace-nowrap"
-            body={(
-              offer: NonNullable<typeof brandedProduct>["offers"][number],
-            ) => offer.publishDate.toLocaleDateString()}
+            body={(offer: Offer) => offer.publishDate.toLocaleDateString()}
             sortable
           ></Column>
           <Column
@@ -121,7 +111,7 @@ export default function ProductOffers() {
             align="right"
             bodyClassName="whitespace-nowrap"
             body={(offer: Offer) =>
-              offer.price.toLocaleString("es-AR", {
+              offer.price.toNumber().toLocaleString("es-AR", {
                 style: "currency",
                 currency: "ARS",
               })

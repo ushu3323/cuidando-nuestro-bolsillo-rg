@@ -7,10 +7,12 @@ import { api, type RouterOutputs } from "~/utils/api";
 export default function ProductsList() {
   const { data: offers, isLoading } = api.offer.getDaily.useQuery();
 
-  const offerItemTemplate = (o: RouterOutputs["offer"]["getDaily"][number]) => {
+  const offerItemTemplate = (
+    offer: RouterOutputs["offer"]["getDaily"][number],
+  ) => {
     return (
       <Link
-        href={`/product/${o.brandedProduct.id}/offers`}
+        href={`/product/${offer.product.id}/offers`}
         className="p-ripple p-card block select-none px-4 py-2 no-underline"
       >
         <div className="flex items-center justify-between">
@@ -18,15 +20,14 @@ export default function ProductsList() {
             <div className="inline-flex items-center opacity-70">
               <i className="pi pi-clock me-2"></i>
               <p className="my-1">
-                {o.publishDate.toLocaleString(undefined, {
+                {offer.publishDate.toLocaleString(undefined, {
                   dateStyle: "full",
                 })}
               </p>
             </div>
-            <h3 className="my-2">{o.brandedProduct.product.name}</h3>
-            <p className="my-2">{o.brandedProduct.brand.name}</p>
+            <h3 className="my-2">{offer.product.name}</h3>
           </div>
-          <span className="font-bold">${o.price.toFixed(2)}</span>
+          <span className="font-bold">${offer.price.toFixed(2)}</span>
         </div>
         <Ripple />
       </Link>

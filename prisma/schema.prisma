@@ -16,39 +16,22 @@ model Category {
     product Product[]
 }
 
-model Brand {
-    id              String           @id @default(uuid())
-    name            String           @unique
-    brandedProducts BrandedProduct[]
-}
-
 model Product {
-    id              String           @id @default(uuid())
-    name            String           @unique
-    categoryId      String
-    category        Category         @relation(fields: [categoryId], references: [id])
-    brandedProducts BrandedProduct[]
-}
-
-model BrandedProduct {
-    id        String  @id @default(uuid())
-    productId String
-    product   Product @relation(fields: [productId], references: [id])
-    brandId   String
-    brand     Brand   @relation(fields: [brandId], references: [id])
-    offers    Offer[]
-
-    @@unique([productId, brandId])
+    id         String   @id @default(uuid())
+    name       String   @unique
+    categoryId String
+    category   Category @relation(fields: [categoryId], references: [id])
+    offers     Offer[]
 }
 
 // Oferta
 model Offer {
-    id               String         @id @default(uuid())
-    brandedProductId String
-    brandedProduct   BrandedProduct @relation(fields: [brandedProductId], references: [id])
-    commerceId       String
-    commerce         Commerce       @relation(fields: [commerceId], references: [id], onDelete: Restrict)
-    price            Decimal        @db.Decimal(20, 2)
+    id         String   @id @default(uuid())
+    productId  String
+    product    Product  @relation(fields: [productId], references: [id])
+    commerceId String
+    commerce   Commerce @relation(fields: [commerceId], references: [id], onDelete: Restrict)
+    price      Decimal  @db.Decimal(20, 2)
 
     publishDate DateTime @default(now())
 }

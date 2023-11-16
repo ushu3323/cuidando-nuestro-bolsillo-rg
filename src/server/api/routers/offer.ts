@@ -10,10 +10,6 @@ export const offerRouter = createTRPCRouter({
           .string()
           .nonempty({ message: "El producto no debe quedar vacio" })
           .pipe(z.string().uuid()),
-        brandId: z
-          .string()
-          .nonempty({ message: "La marca del producto no debe quedar vacia" })
-          .pipe(z.string().uuid()),
         commerceId: z
           .string()
           .nonempty({ message: "El comercio no debe quedar vacio" })
@@ -26,13 +22,8 @@ export const offerRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       return ctx.db.offer.create({
         data: {
-          brandedProduct: {
-            connect: {
-              productId_brandId: {
-                productId: input.productId,
-                brandId: input.brandId,
-              },
-            },
+          product: {
+            connect: { id: input.productId },
           },
           commerce: {
             connect: {
@@ -47,9 +38,7 @@ export const offerRouter = createTRPCRouter({
     return ctx.db.offer.findMany({
       select: {
         id: true,
-        brandedProduct: {
-          include: { brand: true, product: true },
-        },
+        product: true,
         commerce: true,
         price: true,
         publishDate: true,
@@ -61,33 +50,31 @@ export const offerRouter = createTRPCRouter({
     now.setHours(0, 0, 0, 0);
     return ctx.db.offer.findMany({
       orderBy: [{ price: "asc" }, { publishDate: "desc" }],
-      distinct: "brandedProductId",
+      distinct: "productId",
       select: {
         id: true,
-        brandedProduct: {
-          select: { id: true, brand: true, product: true },
-        },
+        product: true,
         commerce: true,
         price: true,
         publishDate: true,
       },
     });
   }),
-  getByBrandedProduct: publicProcedure
-    .input(z.object({ brandedProductId: z.string().uuid() }))
+  getByProduct: publicProcedure
+    .input(z.object({ productId: z.string().uuid() }))
     .query(({ ctx, input }) => {
-      return ctx.db.offer.findMany({
-        where: {
-          brandedProduct: { id: input.brandedProductId },
-        },
-        select: {
-          id: true,
-          brandedProduct: {
-            select: { brand: true, product: true },
+      return ctx.db.product.findUnique({
+        where: { id: input.productId },
+        include: {
+          category: true,
+          offers: {
+            select: {
+              id: true,
+              commerce: true,
+              price: true,
+              publishDate: true,
+            },
           },
-          commerce: true,
-          price: true,
-          publishDate: true,
         },
       });
     }),

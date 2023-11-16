@@ -24,7 +24,6 @@ export default function NewOfferPage() {
   ) =>
     mutateAsync({
       productId: values.productId,
-      brandId: values.brandId,
       commerceId: values.commerceId,
       price: values.price,
     })
@@ -38,7 +37,6 @@ export default function NewOfferPage() {
           console.log("Catch field errors on mutation", fieldErrors);
           void setErrors({
             productId: fieldErrors.productId?.join("\n"),
-            brandId: fieldErrors.brandId?.join("\n"),
             commerceId: fieldErrors.commerceId?.join("\n"),
             price: fieldErrors.price?.join("\n"),
           });

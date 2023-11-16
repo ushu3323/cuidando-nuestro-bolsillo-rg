@@ -6,7 +6,6 @@ import { Card } from "primereact/card";
 import { Dropdown, type DropdownProps } from "primereact/dropdown";
 import { InputNumber } from "primereact/inputnumber";
 import { classNames } from "primereact/utils";
-import { useMemo } from "react";
 import { api, type RouterOutputs } from "../utils/api";
 
 // commerceId Dropdown templates
@@ -33,7 +32,6 @@ const selectedCommerceTemplate = (
 
 export interface NewOfferFormProps {
   productId: string;
-  brandId: string;
   commerceId: string;
   price: number;
 }
@@ -59,7 +57,6 @@ export function NewOfferForm({
   } = useFormik<NewOfferFormProps>({
     initialValues: {
       productId: "",
-      brandId: "",
       commerceId: "",
       price: 0,
     },
@@ -77,17 +74,7 @@ export function NewOfferForm({
   });
 
   const { data: commerces } = api.commerce.getAll.useQuery();
-  const { data: productsWithBrands } = api.product.getAllWithBrands.useQuery();
-
-  const products = useMemo(
-    () => productsWithBrands?.map(({ brands: _, ...rest }) => rest),
-    [productsWithBrands],
-  );
-  const brands = useMemo(
-    () => productsWithBrands?.find((p) => p.id == values.productId)?.brands,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [values.productId],
-  );
+  const { data: products } = api.product.getAll.useQuery();
 
   const getFieldErrorMessages = (
     name: keyof NewOfferFormProps,
@@ -114,14 +101,6 @@ export function NewOfferForm({
   ) => {
     return !!(errors[name] && (opts.ignoreTouched || touched[name]));
   };
-
-  if (brands && brands.length == 1) {
-    const firstBrand = brands[0];
-    if (firstBrand && firstBrand.id != values.brandId) {
-      console.log();
-      void setFieldValue("brandId", firstBrand.id);
-    }
-  }
 
   return (
     <form
@@ -174,37 +153,12 @@ export function NewOfferForm({
                 optionLabel="name"
                 optionValue="id"
                 value={values.productId}
-                onChange={(e) => {
-                  void setFieldValue("brandId", "");
-                  handleChange(e);
-                }}
+                onChange={(e) => handleChange(e)}
                 filter
               />
               <label htmlFor="productId">Producto</label>
             </span>
             {getFieldErrorMessages("productId")}
-          </div>
-          <div>
-            <span className="p-float-label">
-              <Dropdown
-                inputId="brandId"
-                name="brandId"
-                className={classNames("w-full", {
-                  "p-invalid": isFieldInvalid("brandId"),
-                })}
-                disabled={
-                  values.productId.length == 0 || (brands && brands.length <= 1)
-                }
-                options={brands}
-                optionLabel="name"
-                optionValue="id"
-                value={values.brandId}
-                onChange={handleChange}
-                filter
-              />
-              <label htmlFor="brandId">Marca</label>
-            </span>
-            {getFieldErrorMessages("brandId")}
           </div>
           <div>
             <span className="p-float-label">
