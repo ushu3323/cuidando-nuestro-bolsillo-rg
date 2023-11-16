@@ -11,13 +11,13 @@ datasource db {
 }
 
 model Category {
-    id      String    @id @default(uuid())
+    id      String    @id @default(dbgenerated("gen_random_uuid()"))
     name    String    @unique
     product Product[]
 }
 
 model Product {
-    id         String   @id @default(uuid())
+    id         String   @id @default(dbgenerated("gen_random_uuid()"))
     name       String   @unique
     categoryId String
     category   Category @relation(fields: [categoryId], references: [id])
@@ -26,7 +26,7 @@ model Product {
 
 // Oferta
 model Offer {
-    id         String   @id @default(uuid())
+    id         String   @id @default(dbgenerated("gen_random_uuid()"))
     productId  String
     product    Product  @relation(fields: [productId], references: [id])
     commerceId String
@@ -37,7 +37,7 @@ model Offer {
 }
 
 model Commerce {
-    id           String  @id @default(uuid())
+    id           String  @id @default(dbgenerated("gen_random_uuid()"))
     name         String
     street       String
     observations String?
