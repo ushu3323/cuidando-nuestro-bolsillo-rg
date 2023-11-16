@@ -13,7 +13,7 @@ const commerceOptionTemplate = (
   option: RouterOutputs["commerce"]["getAll"][number],
 ) => (
   <div>
-    {option.name} - {option.street}
+    {option.name} - {option.address}
     <div className="opacity-70">&quot;{option.observations}&quot;</div>
   </div>
 );
@@ -23,7 +23,7 @@ const selectedCommerceTemplate = (
 ) =>
   option ? (
     <div>
-      {option.name} - {option.street}
+      {option.name} - {option.address}
       <div className="opacity-70">&quot;{option.observations}&quot;</div>
     </div>
   ) : (

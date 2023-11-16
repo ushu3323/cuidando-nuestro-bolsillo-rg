@@ -90,7 +90,7 @@ export default function ProductOffers() {
             body={({ commerce }: Offer) => (
               <p className="m-0">
                 {commerce.name}{" "}
-                <span className="inline-block">({commerce.street})</span>
+                <span className="inline-block">({commerce.address})</span>
               </p>
             )}
             sortable

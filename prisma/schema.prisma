@@ -39,7 +39,7 @@ model Offer {
 model Commerce {
     id           String  @id @default(dbgenerated("gen_random_uuid()"))
     name         String
-    street       String
+    address      String
     observations String?
     offers       Offer[]
 }
