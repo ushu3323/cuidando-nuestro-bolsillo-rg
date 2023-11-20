@@ -40,7 +40,10 @@ export default function AccessPage() {
                 onSuccess={() => void router.push("/")}
                 onError={(error) => console.log(error)}
               />
-              <GoogleButton />
+              <GoogleButton
+                onSuccess={() => void router.push("/")}
+                onError={(error) => console.log(error)}
+              />
             </div>
           </Card>
         </div>

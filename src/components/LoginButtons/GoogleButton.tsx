@@ -1,9 +1,29 @@
-import { Button, ButtonProps } from "primereact/button";
+import type { AuthError, UserCredential } from "firebase/auth";
+import { Button } from "primereact/button";
+import { useSignInWithGoogle } from "react-firebase-hooks/auth";
+import { auth } from "../../utils/firebase";
 
-export default function GoogleButton(props: ButtonProps) {
+interface Props {
+  className?: string;
+  onSuccess: (user: UserCredential | undefined) => void;
+  onError: (error: AuthError) => void;
+}
+
+export default function GoogleButton({ className, onSuccess, onError }: Props) {
+  const [signInWithGoogle, _user, loading] = useSignInWithGoogle(auth);
+
+  function trySignIn() {
+    signInWithGoogle()
+      .then((user) => onSuccess(user))
+      .catch((error) => onError(error as AuthError));
+  }
+
   return (
     <Button
       label="Acceder con Google"
+      className={className}
+      loading={loading}
+      onClick={trySignIn}
       icon={
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -32,8 +52,6 @@ export default function GoogleButton(props: ButtonProps) {
         </svg>
       }
       type="button"
-      className="w-full border-neutral-600 bg-white text-black"
-      {...props}
     />
   );
 }
