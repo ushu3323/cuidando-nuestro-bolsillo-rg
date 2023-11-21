@@ -1,22 +1,16 @@
-import type { AuthError, UserCredential } from "firebase/auth";
+import { FacebookAuthProvider, signInWithRedirect } from "firebase/auth";
 import { PrimeIcons } from "primereact/api";
 import { Button } from "primereact/button";
-import { useSignInWithFacebook } from "react-firebase-hooks/auth";
+import { useState } from "react";
 import { auth } from "../../utils/firebase";
 
-interface Props {
-  onSuccess: (user: UserCredential | undefined) => void;
-  onError: (error: AuthError) => void;
-}
-
-export default function FacebookButton({ onSuccess, onError }: Props) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [signInWithFacebook, _user, loading] = useSignInWithFacebook(auth);
+export default function FacebookButton() {
+  const [loading, setLoading] = useState(false);
 
   function trySignIn() {
-    signInWithFacebook()
-      .then((user) => onSuccess(user))
-      .catch((error) => onError(error as AuthError));
+    const provider = new FacebookAuthProvider();
+    void signInWithRedirect(auth, provider);
+    setLoading(true);
   }
 
   return (

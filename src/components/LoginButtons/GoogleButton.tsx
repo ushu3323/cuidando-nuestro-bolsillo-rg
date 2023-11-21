@@ -1,20 +1,15 @@
-import type { AuthError, UserCredential } from "firebase/auth";
+import { GoogleAuthProvider, signInWithRedirect } from "firebase/auth";
 import { Button } from "primereact/button";
-import { useSignInWithGoogle } from "react-firebase-hooks/auth";
+import { useState } from "react";
 import { auth } from "../../utils/firebase";
 
-interface Props {
-  onSuccess: (user: UserCredential | undefined) => void;
-  onError: (error: AuthError) => void;
-}
-
-export default function GoogleButton({ onSuccess, onError }: Props) {
-  const [signInWithGoogle, _user, loading] = useSignInWithGoogle(auth);
+export default function GoogleButton() {
+  const [loading, setLoading] = useState(false);
 
   function trySignIn() {
-    signInWithGoogle()
-      .then((user) => onSuccess(user))
-      .catch((error) => onError(error as AuthError));
+    const provider = new GoogleAuthProvider();
+    void signInWithRedirect(auth, provider);
+    setLoading(true);
   }
 
   return (
