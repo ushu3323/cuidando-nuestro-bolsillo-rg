@@ -5,16 +5,11 @@ import { useSignInWithFacebook } from "react-firebase-hooks/auth";
 import { auth } from "../../utils/firebase";
 
 interface Props {
-  className?: string;
   onSuccess: (user: UserCredential | undefined) => void;
   onError: (error: AuthError) => void;
 }
 
-export default function FacebookButton({
-  className,
-  onSuccess,
-  onError,
-}: Props) {
+export default function FacebookButton({ onSuccess, onError }: Props) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [signInWithFacebook, _user, loading] = useSignInWithFacebook(auth);
 
@@ -28,9 +23,10 @@ export default function FacebookButton({
     <Button
       type="button"
       label="Acceder con Facebook"
-      icon={PrimeIcons.FACEBOOK}
+      icon={
+        <i className={`${PrimeIcons.FACEBOOK} bg-[#2374f2] text-[20px]`}></i>
+      }
       onClick={trySignIn}
-      className={className}
       loading={loading}
     ></Button>
   );

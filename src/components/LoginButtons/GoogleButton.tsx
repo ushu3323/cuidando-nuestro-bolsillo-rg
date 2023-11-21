@@ -4,12 +4,11 @@ import { useSignInWithGoogle } from "react-firebase-hooks/auth";
 import { auth } from "../../utils/firebase";
 
 interface Props {
-  className?: string;
   onSuccess: (user: UserCredential | undefined) => void;
   onError: (error: AuthError) => void;
 }
 
-export default function GoogleButton({ className, onSuccess, onError }: Props) {
+export default function GoogleButton({ onSuccess, onError }: Props) {
   const [signInWithGoogle, _user, loading] = useSignInWithGoogle(auth);
 
   function trySignIn() {
@@ -21,7 +20,7 @@ export default function GoogleButton({ className, onSuccess, onError }: Props) {
   return (
     <Button
       label="Acceder con Google"
-      className={className}
+      className="border-black bg-white text-black"
       loading={loading}
       onClick={trySignIn}
       icon={
