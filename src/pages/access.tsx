@@ -13,30 +13,41 @@ import { auth } from "../utils/firebase";
 export default function AccessPage() {
   const router = useRouter();
   const [user, userLoading, userError] = useAuthState(auth);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
+    console.info("[Auth] Trying to get redirect operation result...");
     getRedirectResult(auth)
-      .then(async (credential) => {
+      .then((credential) => {
         if (credential) {
-          console.log("Credential", credential);
-          await router.replace("/");
-          return;
-        }
-
-        if (!userLoading) {
-          if (user) {
-            await router.replace("/");
-          } else {
-            if (userError) console.error(userError);
-            setLoading(false);
-          }
+          console.info(
+            "[Auth] Successfully received credential from redirect operation result",
+          );
+        } else {
+          console.log("[Auth] Redirect operation not found");
         }
       })
       .catch((error) => {
-        console.error(error);
+        console.error(
+          "[Auth] Error while trying to get redirect operation result",
+          error,
+        );
       });
+  }, []);
+
+  useEffect(() => {
+    if (!userLoading) {
+      if (user) {
+        console.error("[Auth] User authenticated", userError);
+        void router.replace("/");
+      } else {
+        if (userError) {
+          console.error("[Auth] Error while authenticating user", userError);
+        }
+        setLoading(false);
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, userLoading]);
 
