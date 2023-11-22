@@ -12,7 +12,7 @@ import { auth } from "../utils/firebase";
 
 export default function AccessPage() {
   const router = useRouter();
-  const [user, userLoading] = useAuthState(auth);
+  const [user, userLoading, userError] = useAuthState(auth);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -29,13 +29,13 @@ export default function AccessPage() {
           if (user) {
             await router.replace("/");
           } else {
+            if (userError) console.error(userError);
             setLoading(false);
           }
         }
       })
       .catch((error) => {
         console.error(error);
-        void router.replace("/");
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, userLoading]);
