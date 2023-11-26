@@ -9,6 +9,7 @@ import {
 } from "~/components/NewOfferForm";
 import { type AppRouter } from "~/server/api/root";
 import { api } from "~/utils/api";
+import Private from "../../components/Private";
 
 export default function NewOfferPage() {
   const router = useRouter();
@@ -50,11 +51,13 @@ export default function NewOfferPage() {
       });
 
   return (
-    <main className="flex min-h-screen flex-col">
-      <Toast ref={toast} />
-      <div className="flex grow items-stretch justify-center sm:items-center">
-        <NewOfferForm onSubmit={handleOnSubmit} />
-      </div>
-    </main>
+    <Private>
+      <main className="flex min-h-screen flex-col">
+        <Toast ref={toast} />
+        <div className="flex grow items-stretch justify-center sm:items-center">
+          <NewOfferForm onSubmit={handleOnSubmit} />
+        </div>
+      </main>
+    </Private>
   );
 }
