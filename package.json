@@ -5,6 +5,8 @@
   "scripts": {
     "build": "next build",
     "db:push": "prisma db push",
+    "db:makemigration": "prisma migrate dev --create-only",
+    "db:migrate": "prisma migrate dev",
     "dev": "next dev",
     "postinstall": "prisma generate",
     "lint": "next lint",
