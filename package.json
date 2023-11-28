@@ -5,12 +5,16 @@
   "scripts": {
     "build": "next build",
     "db:push": "prisma db push",
+    "db:seed": "prisma db seed",
     "db:makemigration": "prisma migrate dev --create-only",
     "db:migrate": "prisma migrate dev",
     "dev": "next dev",
     "postinstall": "prisma generate",
     "lint": "next lint",
     "start": "next start"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   },
   "dependencies": {
     "@prisma/client": "^5.1.1",
