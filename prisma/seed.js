@@ -159,30 +159,27 @@ async function main() {
         commerceId: Commerces.BLUE.id,
         productId: Products.MAPLE_HUEVOS.id,
         price: 2500,
+        authorUID: "",
       },
       {
         commerceId: Commerces.RED.id,
         productId: Products.MAPLE_HUEVOS.id,
         price: 2250,
+        authorUID: "",
       },
       {
         commerceId: Commerces.NEW_BLUE.id,
         productId: Products.LECHE_1L.id,
         price: 716,
+        authorUID: "",
       },
       {
         commerceId: Commerces.NEW_RED.id,
         productId: Products.LECHE_1L.id,
         price: 800,
+        authorUID: "",
       },
     ],
-  });
-
-  await prisma.offer.findMany({
-    include: {
-      product: true,
-      commerce: true,
-    },
   });
 }
 

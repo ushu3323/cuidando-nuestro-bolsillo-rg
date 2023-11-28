@@ -1,9 +1,13 @@
 import { Prisma } from "@prisma/client";
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "~/server/api/trpc";
 
 export const offerRouter = createTRPCRouter({
-  create: publicProcedure
+  create: protectedProcedure
     .input(
       z.object({
         productId: z
@@ -31,6 +35,7 @@ export const offerRouter = createTRPCRouter({
             },
           },
           price: new Prisma.Decimal(input.price),
+          authorUID: ctx.token.uid,
         },
       });
     }),

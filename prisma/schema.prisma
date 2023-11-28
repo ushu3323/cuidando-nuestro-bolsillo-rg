@@ -32,6 +32,7 @@ model Offer {
     commerceId String
     commerce   Commerce @relation(fields: [commerceId], references: [id], onDelete: Restrict)
     price      Decimal  @db.Decimal(20, 2)
+    authorUID  String
 
     publishDate DateTime @default(now())
 }
