@@ -9,6 +9,7 @@ import { createTRPCNext } from "@trpc/next";
 import { type inferRouterInputs, type inferRouterOutputs } from "@trpc/server";
 
 import { type AppRouter } from "~/server/api/root";
+import { auth } from "./firebase";
 import superjson from "./superjson";
 
 const getBaseUrl = () => {
@@ -41,6 +42,13 @@ export const api = createTRPCNext<AppRouter>({
         }),
         httpBatchLink({
           url: `${getBaseUrl()}/api/trpc`,
+          async headers(opts) {
+            opts.opList.some((op) => op.context);
+            const token = await auth.currentUser?.getIdToken();
+            return {
+              Authorization: `Bearer ${token}`,
+            };
+          },
         }),
       ],
     };
