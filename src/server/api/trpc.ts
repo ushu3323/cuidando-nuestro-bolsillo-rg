@@ -13,7 +13,7 @@ import { ZodError } from "zod";
 
 import { db } from "~/server/db";
 import superjson from "../../utils/superjson";
-import { auth } from "../firebase_admin";
+import { fbAdmin } from "../firebase_admin";
 
 /**
  * 1. CONTEXT
@@ -52,9 +52,15 @@ const createInnerTRPCContext = (_opts: CreateContextOptions) => {
  */
 export const createTRPCContext = async (_opts: CreateNextContextOptions) => {
   let token: DecodedIdToken | null = null;
-  const authorization = _opts.req.headers.authorization?.split("Bearer ")[1];
-  if (authorization) {
-    token = await auth.verifyIdToken(authorization);
+
+  const encodedToken = _opts.req.headers.authorization?.split("Bearer ")[1];
+  if (encodedToken) {
+    try {
+      token = await fbAdmin.auth.verifyIdToken(encodedToken);
+    } catch (error) {
+      console.error("Error verifying token while creating TRPC Context");
+      console.error(error);
+    }
   }
   return createInnerTRPCContext({ token });
 };
