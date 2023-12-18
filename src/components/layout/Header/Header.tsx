@@ -39,7 +39,7 @@ export default function Header() {
         <Button
           label="Acceder"
           severity="help"
-          onClick={() => void router.push("/access")}
+          onClick={() => void router.push("/auth/login")}
         />
       </>
     );
