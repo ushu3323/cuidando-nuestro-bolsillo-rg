@@ -1,3 +1,4 @@
+import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
 import { PrimeReactProvider } from "primereact/api";
@@ -6,7 +7,6 @@ import { api } from "~/utils/api";
 import "primeicons/primeicons.css";
 import "primereact/resources/themes/lara-light-blue/theme.css";
 
-import { type Session } from "next-auth";
 import Head from "next/head";
 import "~/styles/globals.css";
 
