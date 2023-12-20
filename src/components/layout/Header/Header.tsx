@@ -1,3 +1,4 @@
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/router";
@@ -5,13 +6,11 @@ import { PrimeIcons } from "primereact/api";
 import { Button } from "primereact/button";
 import { type MenuItem } from "primereact/menuitem";
 import { ProgressSpinner } from "primereact/progressspinner";
-import { useAuthState, useSignOut } from "react-firebase-hooks/auth";
-import { auth } from "~/utils/firebase";
 import AvatarMenu from "./AvatarMenu";
 
 export default function Header() {
-  const [user, loading] = useAuthState(auth);
-  const [signOut] = useSignOut(auth);
+  const { data, status } = useSession();
+  const user = data?.user;
   const path = usePathname();
   const router = useRouter();
 
@@ -49,7 +48,7 @@ export default function Header() {
       <Link href="/" className="text-lg font-bold text-black no-underline">
         Cuidando nuestro bolsillo
       </Link>
-      {loading ? (
+      {status === "loading" ? (
         <ProgressSpinner style={{ margin: 0, height: "100%" }} />
       ) : (
         <Actions />

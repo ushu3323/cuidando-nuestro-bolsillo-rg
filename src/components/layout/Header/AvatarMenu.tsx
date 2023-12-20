@@ -1,4 +1,4 @@
-import { type User } from "firebase/auth";
+import { Session } from "next-auth";
 import { Avatar } from "primereact/avatar";
 import { Button } from "primereact/button";
 import { Menu } from "primereact/menu";
@@ -9,7 +9,7 @@ export default function AvatarMenu({
   user,
   menuItems,
 }: {
-  user: User;
+  user: Session["user"];
   menuItems: MenuItem[];
 }) {
   const menuRef = useRef<Menu>(null);
@@ -24,8 +24,8 @@ export default function AvatarMenu({
         text
       >
         <Avatar
-          image={user.photoURL ?? undefined}
-          label={user.displayName?.charAt(0)}
+          image={user.image ?? undefined}
+          label={user.name?.charAt(0)}
           className="me-3"
           size="large"
           shape="circle"
