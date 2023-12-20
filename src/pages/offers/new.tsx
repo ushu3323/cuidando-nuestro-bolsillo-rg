@@ -1,5 +1,6 @@
 import { type TRPCClientError } from "@trpc/client";
 import { type FormikHelpers } from "formik";
+import { type GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { Toast } from "primereact/toast";
 import { useRef } from "react";
@@ -9,6 +10,7 @@ import {
 } from "~/components/NewOfferForm";
 import { type AppRouter } from "~/server/api/root";
 import { api } from "~/utils/api";
+import { getServerAuthSessionProps } from "../../server/auth";
 
 export default function NewOfferPage() {
   const router = useRouter();
@@ -58,3 +60,7 @@ export default function NewOfferPage() {
     </main>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  return getServerAuthSessionProps(ctx);
+};

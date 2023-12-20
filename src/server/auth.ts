@@ -1,9 +1,13 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { type GetServerSidePropsContext } from "next";
+import {
+  type GetServerSidePropsContext,
+  type GetServerSidePropsResult,
+} from "next";
 import {
   getServerSession,
   type DefaultSession,
   type NextAuthOptions,
+  type Session,
 } from "next-auth";
 import FacebookProvider from "next-auth/providers/facebook";
 import GoogleProvider from "next-auth/providers/google";
@@ -73,4 +77,26 @@ export const getServerAuthSession = (ctx: {
   res: GetServerSidePropsContext["res"];
 }) => {
   return getServerSession(ctx.req, ctx.res, authOptions);
+};
+
+export const getServerAuthSessionProps = async (ctx: {
+  req: GetServerSidePropsContext["req"];
+  res: GetServerSidePropsContext["res"];
+}): Promise<GetServerSidePropsResult<{ session: Session | null }>> => {
+  const session = await getServerAuthSession(ctx);
+  if (session) {
+    return {
+      props: { session },
+    };
+  }
+
+  const originUrl = ctx.req.url;
+  const callbackUrlParam = originUrl && `?callbackUrl=${originUrl}`;
+  return {
+    props: { session },
+    redirect: {
+      permanent: false,
+      destination: `/auth/login${callbackUrlParam}`,
+    },
+  };
 };
