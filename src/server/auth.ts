@@ -53,17 +53,6 @@ export const authOptions: NextAuthOptions = {
         id: user.id,
       },
     }),
-    redirect({ url, baseUrl }) {
-      console.log("redirect", { url, baseUrl });
-      const urlObj = new URL(url);
-      // Allows relative callback URLs
-      if (url.startsWith("/")) return `${baseUrl}${url}`;
-      else if (urlObj.searchParams.get("callbackUrl"))
-        return `${baseUrl}${urlObj.searchParams.get("callbackUrl")}`;
-      // Allows callback URLs on the same origin
-      else if (urlObj.origin === baseUrl) return url;
-      return baseUrl;
-    },
   },
   adapter: PrismaAdapter(db),
   providers: [
