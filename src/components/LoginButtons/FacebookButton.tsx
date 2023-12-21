@@ -1,15 +1,19 @@
-import { FacebookAuthProvider, signInWithRedirect } from "firebase/auth";
+import { signIn } from "next-auth/react";
 import { PrimeIcons } from "primereact/api";
 import { Button } from "primereact/button";
 import { useState } from "react";
-import { auth } from "../../utils/firebase";
 
-export default function FacebookButton() {
+export default function FacebookButton({
+  callbackUrl,
+}: {
+  callbackUrl?: string;
+}) {
   const [loading, setLoading] = useState(false);
 
   function trySignIn() {
-    const provider = new FacebookAuthProvider();
-    void signInWithRedirect(auth, provider);
+    void signIn("facebook", {
+      callbackUrl: callbackUrl,
+    });
     setLoading(true);
   }
 

@@ -8,12 +8,12 @@
  */
 import { TRPCError, initTRPC } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
-import { type DecodedIdToken } from "firebase-admin/auth";
 import { ZodError } from "zod";
 
+import { type Session } from "next-auth";
 import { db } from "~/server/db";
 import superjson from "../../utils/superjson";
-import { fbAdmin } from "../firebase_admin";
+import { getServerAuthSession } from "../auth";
 
 /**
  * 1. CONTEXT
@@ -24,7 +24,7 @@ import { fbAdmin } from "../firebase_admin";
  */
 
 type CreateContextOptions = {
-  token: DecodedIdToken | null;
+  session: Session | null;
 };
 
 /**
@@ -40,7 +40,7 @@ type CreateContextOptions = {
 const createInnerTRPCContext = (_opts: CreateContextOptions) => {
   return {
     db,
-    token: _opts.token,
+    session: _opts.session,
   };
 };
 
@@ -51,18 +51,10 @@ const createInnerTRPCContext = (_opts: CreateContextOptions) => {
  * @see https://trpc.io/docs/context
  */
 export const createTRPCContext = async (_opts: CreateNextContextOptions) => {
-  let token: DecodedIdToken | null = null;
-
-  const encodedToken = _opts.req.headers.authorization?.split("Bearer ")[1];
-  if (encodedToken) {
-    try {
-      token = await fbAdmin.auth.verifyIdToken(encodedToken);
-    } catch (error) {
-      console.error("Error verifying token while creating TRPC Context");
-      console.error(error);
-    }
-  }
-  return createInnerTRPCContext({ token });
+  const session = await getServerAuthSession(_opts);
+  return createInnerTRPCContext({
+    session,
+  });
 };
 
 /**
@@ -112,13 +104,13 @@ export const publicProcedure = t.procedure;
 
 const isAuthenticated = t.middleware(async (opts) => {
   const { ctx } = opts;
-  if (!ctx.token) {
+  if (!ctx.session) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   return opts.next({
     ctx: {
       ...ctx,
-      token: ctx.token,
+      session: ctx.session,
     },
   });
 });

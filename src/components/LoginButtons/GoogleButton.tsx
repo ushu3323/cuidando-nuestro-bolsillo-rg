@@ -1,14 +1,18 @@
-import { GoogleAuthProvider, signInWithRedirect } from "firebase/auth";
+import { signIn } from "next-auth/react";
 import { Button } from "primereact/button";
 import { useState } from "react";
-import { auth } from "../../utils/firebase";
 
-export default function GoogleButton() {
+export default function GoogleButton({
+  callbackUrl,
+}: {
+  callbackUrl?: string;
+}) {
   const [loading, setLoading] = useState(false);
 
   function trySignIn() {
-    const provider = new GoogleAuthProvider();
-    void signInWithRedirect(auth, provider);
+    void signIn("google", {
+      callbackUrl: callbackUrl,
+    });
     setLoading(true);
   }
 

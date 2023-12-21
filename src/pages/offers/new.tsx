@@ -1,5 +1,6 @@
 import { type TRPCClientError } from "@trpc/client";
 import { type FormikHelpers } from "formik";
+import { type GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { Toast } from "primereact/toast";
 import { useRef } from "react";
@@ -9,7 +10,7 @@ import {
 } from "~/components/NewOfferForm";
 import { type AppRouter } from "~/server/api/root";
 import { api } from "~/utils/api";
-import Private from "../../components/Private";
+import { getServerAuthSessionProps } from "../../server/auth";
 
 export default function NewOfferPage() {
   const router = useRouter();
@@ -51,13 +52,15 @@ export default function NewOfferPage() {
       });
 
   return (
-    <Private>
-      <main className="flex min-h-screen flex-col">
-        <Toast ref={toast} />
-        <div className="flex grow items-stretch justify-center sm:items-center">
-          <NewOfferForm onSubmit={handleOnSubmit} />
-        </div>
-      </main>
-    </Private>
+    <main className="flex min-h-screen flex-col">
+      <Toast ref={toast} />
+      <div className="flex grow items-stretch justify-center sm:items-center">
+        <NewOfferForm onSubmit={handleOnSubmit} />
+      </div>
+    </main>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  return getServerAuthSessionProps(ctx);
+};

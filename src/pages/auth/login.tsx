@@ -1,62 +1,34 @@
-import { getRedirectResult } from "firebase/auth";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { PrimeIcons } from "primereact/api";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { ProgressSpinner } from "primereact/progressspinner";
-import { useEffect, useState } from "react";
-import { useAuthState } from "react-firebase-hooks/auth";
+import { useEffect } from "react";
 import FacebookButton from "~/components/LoginButtons/FacebookButton";
 import GoogleButton from "~/components/LoginButtons/GoogleButton";
-import { auth } from "../utils/firebase";
 
 export default function AccessPage() {
+  const { status } = useSession();
   const router = useRouter();
-  const [user, userLoading, userError] = useAuthState(auth);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
-    console.info("[Auth] Trying to get redirect operation result...");
-    getRedirectResult(auth)
-      .then((credential) => {
-        if (credential) {
-          console.info(
-            "[Auth] Successfully received credential from redirect operation result",
-          );
-        } else {
-          console.log("[Auth] Redirect operation not found");
-        }
-      })
-      .catch((error) => {
-        console.error(
-          "[Auth] Error while trying to get redirect operation result",
-          error,
-        );
-      });
-  }, []);
-
-  useEffect(() => {
-    if (!userLoading) {
-      if (user) {
-        console.error("[Auth] User authenticated", userError);
-        void router.replace("/");
-      } else {
-        if (userError) {
-          console.error("[Auth] Error while authenticating user", userError);
-        }
-        setLoading(false);
-      }
+    if (status === "authenticated") {
+      void router.replace("/");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, userLoading]);
+  }, [status, router]);
 
   return (
     <main className="flex min-h-screen flex-col">
       <div className="flex grow items-stretch justify-center sm:items-center">
         <div className="flex w-full sm:w-96">
-          {userLoading || loading ? (
-            <ProgressSpinner />
+          {status === "loading" || status === "authenticated" ? (
+            <>
+              <ProgressSpinner />
+              {status === "authenticated" && (
+                <p>Autenticado, redirigiendo...</p>
+              )}
+            </>
           ) : (
             <Card
               title={
