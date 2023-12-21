@@ -47,13 +47,20 @@ export default function LoginPage() {
             }
             className="w-full grow border-2 border-zinc-100 shadow-none sm:border-solid sm:shadow-xl"
             pt={{
-              title: {
-                className: "mb-5",
-              },
               body: { className: "h-full flex flex-col items-stretch" },
               content: { className: "grow" },
             }}
           >
+            <h1 className="text-center">Precios RG</h1>
+            <div className="mb-14 flex w-full justify-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                className="m-auto text-center"
+                width={200}
+                src="/favicon.svg"
+                alt=""
+              />
+            </div>
             <div className="flex flex-col gap-4">
               <FacebookButton />
               <GoogleButton />
