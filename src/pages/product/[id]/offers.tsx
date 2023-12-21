@@ -3,7 +3,7 @@ import { PrimeIcons } from "primereact/api";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
-import { ProgressSpinner } from "primereact/progressspinner";
+import LoadingPage from "~/components/LoadingPage";
 import { api } from "~/utils/api";
 
 export default function ProductOffers() {
@@ -28,9 +28,7 @@ export default function ProductOffers() {
 
   if (isLoading) {
     return (
-      <div className="flex grow flex-col justify-center">
-        <ProgressSpinner />
-      </div>
+      <LoadingPage/>
     );
   }
 
