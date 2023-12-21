@@ -24,13 +24,22 @@ export const env = createEnv({
       process.env.NODE_ENV === "production"
         ? z.string()
         : z.string().optional(),
-    NEXTAUTH_URL: z.preprocess(
-      // This makes Vercel deployments not fail if you don't set NEXTAUTH_URL
-      // Since NextAuth.js automatically uses the VERCEL_URL if present.
-      (str) => process.env.VERCEL_URL ?? str,
-      // VERCEL_URL doesn't include `https` so it cant be validated as a URL
-      process.env.VERCEL ? z.string() : z.string().url(),
-    ),
+    NEXTAUTH_URL: z.preprocess((str) => {
+      console.log({
+        netlify: process.env.NETLIFY,
+        pull_request: process.env.PULL_REQUEST,
+        url: process.env.URL,
+        deploy_url: process.env.DEPLOY_URL,
+        deploy_prime_url: process.env.DEPLOY_PRIME_URL,
+      });
+      if (process.env.NETLIFY) {
+        if (process.env.PULL_REQUEST) {
+          return process.env.DEPLOY_URL;
+        }
+        return process.env.URL;
+      }
+      return str;
+    }, z.string().url()),
     FACEBOOK_CLIENT_ID: z.string().nonempty(),
     FACEBOOK_CLIENT_SECRET: z.string().nonempty(),
     GOOGLE_CLIENT_ID: z.string().nonempty(),
