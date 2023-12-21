@@ -1,3 +1,3 @@
 -- AlterTable
-ALTER TABLE "Offer" ADD COLUMN     "authorUID" TEXT NOT NULL;
-UPDATE "Offer" set "authorUID"='';
+ALTER TABLE "Offer" ADD COLUMN "authorUID" TEXT NOT NULL DEFAULT '';
+ALTER TABLE public."Offer" ALTER COLUMN "authorUID" DROP DEFAULT;
