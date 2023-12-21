@@ -23,6 +23,7 @@ export default function AvatarMenu({
         size="small"
         text
       >
+        <div className="pe-5 text-black">{user.name}</div>
         <Avatar
           image={user.image ?? undefined}
           label={user.name?.charAt(0)}
