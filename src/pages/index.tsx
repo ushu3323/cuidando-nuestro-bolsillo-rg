@@ -31,12 +31,12 @@ export default function HomePage() {
             icon={PrimeIcons.PLUS}
             label="Cargar precios"
             severity="success"
-            onClick={() => router.push("/offers/new")}
+            onClick={() => void router.push("/offers/new")}
           />
           <Button
             icon={PrimeIcons.SEARCH}
             label="Visualizar precios"
-            onClick={() => router.push("/offers")}
+            onClick={() => void router.push("/offers")}
           />
         </div>
       </main>
