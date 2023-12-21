@@ -10,6 +10,7 @@ import {
 } from "~/components/NewOfferForm";
 import { type AppRouter } from "~/server/api/root";
 import { api } from "~/utils/api";
+import Header from "../../components/layout/Header/Header";
 import { getServerAuthSessionProps } from "../../server/auth";
 
 export default function NewOfferPage() {
@@ -52,12 +53,15 @@ export default function NewOfferPage() {
       });
 
   return (
-    <main className="flex min-h-screen flex-col">
-      <Toast ref={toast} />
-      <div className="flex grow items-stretch justify-center sm:items-center">
-        <NewOfferForm onSubmit={handleOnSubmit} />
-      </div>
-    </main>
+    <div className="flex min-h-screen flex-col">
+      <Header />
+      <main className="flex h-full flex-grow">
+        <Toast ref={toast} />
+        <div className="flex grow items-stretch justify-center sm:items-center">
+          <NewOfferForm onSubmit={handleOnSubmit} />
+        </div>
+      </main>
+    </div>
   );
 }
 
