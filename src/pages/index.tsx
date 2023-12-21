@@ -1,14 +1,21 @@
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { PrimeIcons } from "primereact/api";
 import { Button } from "primereact/button";
-import Header from "../components/layout/Header/Header";
+import LoadingPage from "../components/LoadingPage";
 
 export default function HomePage() {
+  const { data: session, status } = useSession({ required: true });
+  const user = session?.user;
   const router = useRouter();
+
+  if (status === "loading") {
+    return <LoadingPage />;
+  }
+
   return (
     <>
-      <Header showTitle={false} />
-      <main className="flex min-h-screen flex-col">
+      <main className="flex flex-col p-10">
         <h1 className="text-center">Precios RG</h1>
         <div className="mb-14 flex w-full justify-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -18,6 +25,7 @@ export default function HomePage() {
             alt=""
           />
         </div>
+        <h2 className="mb-10 text-center">Bienvenido, {user?.name}!</h2>
         <div className="mb-20 flex w-full justify-center gap-12">
           <Button
             icon={PrimeIcons.PLUS}
