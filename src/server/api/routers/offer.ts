@@ -35,7 +35,7 @@ export const offerRouter = createTRPCRouter({
             },
           },
           price: new Prisma.Decimal(input.price),
-          authorUID: ctx.token.uid,
+          authorUID: ctx.session.user.id,
         },
       });
     }),

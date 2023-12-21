@@ -26,8 +26,6 @@
     "@trpc/react-query": "^10.37.1",
     "@trpc/server": "^10.37.1",
     "decimal.js": "^10.4.3",
-    "firebase": "^10.6.0",
-    "firebase-admin": "^11.11.1",
     "formik": "^2.4.5",
     "html5-qrcode": "^2.3.8",
     "next": "^13.4.19",
