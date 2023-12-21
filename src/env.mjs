@@ -25,13 +25,6 @@ export const env = createEnv({
         ? z.string()
         : z.string().optional(),
     NEXTAUTH_URL: z.preprocess((str) => {
-      console.log({
-        netlify: process.env.NETLIFY,
-        pull_request: process.env.PULL_REQUEST,
-        url: process.env.URL,
-        deploy_url: process.env.DEPLOY_URL,
-        deploy_prime_url: process.env.DEPLOY_PRIME_URL,
-      });
       if (process.env.NETLIFY) {
         if (process.env.PULL_REQUEST) {
           return process.env.DEPLOY_URL;
