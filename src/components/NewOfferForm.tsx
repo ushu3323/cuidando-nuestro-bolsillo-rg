@@ -46,32 +46,26 @@ export function NewOfferForm({
   ) => void | Promise<any>;
 }) {
   const router = useRouter();
-  const {
-    values,
-    errors,
-    touched,
-    handleSubmit,
-    handleChange,
-    setFieldValue,
-    isSubmitting,
-  } = useFormik<NewOfferFormProps>({
-    initialValues: {
-      productId: "",
-      commerceId: "",
-      price: 0,
-    },
-    validate(formikValues) {
-      const formikErrors: Partial<Record<keyof NewOfferFormProps, string>> = {};
-      if (formikValues.productId.length == 0) {
-        formikErrors.productId = "Seleccione un producto";
-      }
+  const { values, errors, touched, handleSubmit, handleChange, isSubmitting } =
+    useFormik<NewOfferFormProps>({
+      initialValues: {
+        productId: "",
+        commerceId: "",
+        price: 0,
+      },
+      validate(formikValues) {
+        const formikErrors: Partial<Record<keyof NewOfferFormProps, string>> =
+          {};
+        if (formikValues.productId.length == 0) {
+          formikErrors.productId = "Seleccione un producto";
+        }
 
-      return formikErrors;
-    },
-    onSubmit: onSubmit,
-    validateOnBlur: false,
-    validateOnChange: false,
-  });
+        return formikErrors;
+      },
+      onSubmit: onSubmit,
+      validateOnBlur: false,
+      validateOnChange: false,
+    });
 
   const { data: commerces } = api.commerce.getAll.useQuery();
   const { data: products } = api.product.getAll.useQuery();
