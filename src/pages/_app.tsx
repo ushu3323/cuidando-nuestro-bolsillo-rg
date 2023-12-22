@@ -1,33 +1,33 @@
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
-import { PrimeReactProvider } from "primereact/api";
+import Head from "next/head";
 import { api } from "~/utils/api";
 
-import "primeicons/primeicons.css";
-import "primereact/resources/themes/lara-light-blue/theme.css";
-
-import Head from "next/head";
+import { GlobalStyles } from "@mui/material";
 import "~/styles/globals.css";
+import MUIProvider from "../components/MUIProvider";
+
+const inputGlobalStyles = (
+  <GlobalStyles styles={{ body: { fontFamily: "Inter" } }} />
+);
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
   return (
-    <SessionProvider session={session}>
-      <PrimeReactProvider value={{ ripple: true }}>
-        <Head>
-          <title>Cuidando Nuestro Bolsillo</title>
-          <meta
-            name="description"
-            content="Colaboramos entre todos para ahorrar en Rio Grande!"
-          />
-          <link rel="icon" href="/favicon.svg" />
-        </Head>
-        <Component {...pageProps} />
-      </PrimeReactProvider>
-    </SessionProvider>
+    <>
+      <Head>
+        <title>Cuidando Nuestro Bolsillo</title>
+      </Head>
+      <SessionProvider session={session}>
+        <MUIProvider {...pageProps}>
+          {inputGlobalStyles}
+          <Component {...pageProps} />
+        </MUIProvider>
+      </SessionProvider>
+    </>
   );
 };
 
