@@ -1,3 +1,5 @@
+import createCache, { type EmotionCache } from "@emotion/cache";
+import { CacheProvider } from "@emotion/react";
 import {
   StyledEngineProvider,
   ThemeProvider,
@@ -35,11 +37,25 @@ const theme = createTheme({
   },
 });
 
-export default function MUIProvider({ children, ...props }: PropsWithChildren) {
+const cache = createCache({
+  key: "css",
+  prepend: true,
+});
+
+interface EmotionCacheProviderProps {
+  emotionCache?: EmotionCache;
+}
+
+export default function MUIProvider({
+  children,
+  ...props
+}: PropsWithChildren<EmotionCacheProviderProps>) {
   return (
     <AppCacheProvider {...props}>
       <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}>{children}</ThemeProvider>
+        <CacheProvider value={cache}>
+          <ThemeProvider theme={theme}>{children}</ThemeProvider>
+        </CacheProvider>
       </StyledEngineProvider>
     </AppCacheProvider>
   );
