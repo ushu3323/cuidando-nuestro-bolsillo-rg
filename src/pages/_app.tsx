@@ -4,12 +4,18 @@ import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
 import Head from "next/head";
 import { api } from "~/utils/api";
-import MUIProvider from "../components/MUIProvider";
+import MUIProvider from "../providers/MUI/MUIProvider";
 
 import "~/styles/globals.css";
 
 const inputGlobalStyles = (
-  <GlobalStyles styles={{ body: { fontFamily: "Inter" } }} />
+  <GlobalStyles
+    styles={(theme) => ({
+      body: {
+        fontFamily: theme.typography.fontFamily,
+      },
+    })}
+  />
 );
 
 const MyApp: AppType<{ session: Session | null }> = ({
