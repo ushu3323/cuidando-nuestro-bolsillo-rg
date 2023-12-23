@@ -4,28 +4,56 @@ export const theme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      main: "#4c6e9a",
+      main: "#448aff",
     },
     secondary: {
-      main: "#ffa000",
+      main: "#ffC107",
+    },
+    success: {
+      main: "#00c853",
+      contrastText: "#fff",
+    },
+    info: {
+      main: "#03a9f4",
+    },
+    error: {
+      main: "#d50000",
+    },
+    warning: {
+      main: "#f57c00",
     },
   },
   typography: {
     h1: {
-      fontWeight: 600,
+      fontWeight: 700,
     },
     h2: {
-      fontWeight: 600,
+      fontWeight: 700,
     },
     h3: {
-      fontWeight: 600,
+      fontWeight: 700,
     },
     h4: {
       fontWeight: 700,
     },
+    button: {
+      fontWeight: 700,
+      textTransform: "none",
+      fontSize: "1rem",
+    },
     fontFamily: "Inter",
   },
   shape: {
-    borderRadius: 4,
+    borderRadius: 6,
+  },
+  components: {
+    MuiButton: {
+      defaultProps: {
+        sx: {
+          height: "3em",
+        },
+        disableElevation: true,
+      },
+    },
   },
 });
