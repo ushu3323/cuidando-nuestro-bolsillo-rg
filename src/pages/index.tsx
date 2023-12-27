@@ -1,6 +1,7 @@
 import { Button, Typography } from "@mui/material";
 import { useSession } from "next-auth/react";
 import LoadingPage from "../components/LoadingPage";
+import Layout from "../components/layout/Layout";
 
 export default function HomePage() {
   const { data: session, status } = useSession({ required: true });
@@ -11,8 +12,8 @@ export default function HomePage() {
   }
 
   return (
-    <>
-      <main className="flex flex-col p-10">
+    <Layout>
+      <main>
         <Typography variant="h1" className="text-center">
           Precios RG
         </Typography>
@@ -33,6 +34,6 @@ export default function HomePage() {
       <footer className="">
         MAGIANPC Marca registrada <span className="text-base">&#174;</span>
       </footer>
-    </>
+    </Layout>
   );
 }
