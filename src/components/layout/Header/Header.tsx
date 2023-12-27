@@ -1,5 +1,6 @@
 import { AppBar, CircularProgress, Toolbar, Typography } from "@mui/material";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import AvatarMenu from "./AvatarMenu";
 
 export default function Header() {
@@ -9,9 +10,16 @@ export default function Header() {
   return (
     <AppBar position="sticky">
       <Toolbar>
-        <Typography variant="h5" fontWeight={700} sx={{ flexGrow: 1 }}>
-          Precios RG
-        </Typography>
+        <Link href="/" className="flex-grow text-inherit no-underline">
+          <Typography
+            component="span"
+            variant="h5"
+            fontWeight={700}
+            sx={{ flexGrow: 1 }}
+          >
+            Precios RG
+          </Typography>
+        </Link>
         {status === "loading" ? (
           <CircularProgress></CircularProgress>
         ) : (
