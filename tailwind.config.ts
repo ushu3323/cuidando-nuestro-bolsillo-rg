@@ -2,10 +2,8 @@ import { type Config } from "tailwindcss";
 
 export default {
   darkMode: "class",
-  content: [
-    "./src/**/*.{js,ts,jsx,tsx}",
-    "./node_modules/primereact/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ["./src/**/*.{js,ts,jsx,tsx}"],
+  important: "#__next",
   corePlugins: {
     preflight: false,
   },

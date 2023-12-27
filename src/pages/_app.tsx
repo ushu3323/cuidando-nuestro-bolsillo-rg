@@ -1,33 +1,40 @@
+import { CssBaseline, GlobalStyles } from "@mui/material";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
-import { PrimeReactProvider } from "primereact/api";
-import { api } from "~/utils/api";
-
-import "primeicons/primeicons.css";
-import "primereact/resources/themes/lara-light-blue/theme.css";
-
 import Head from "next/head";
+import { api } from "~/utils/api";
+import MUIProvider from "../providers/MUI/MUIProvider";
+
 import "~/styles/globals.css";
+
+const inputGlobalStyles = (
+  <GlobalStyles
+    styles={(theme) => ({
+      body: {
+        fontFamily: theme.typography.fontFamily,
+      },
+    })}
+  />
+);
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
   return (
-    <SessionProvider session={session}>
-      <PrimeReactProvider value={{ ripple: true }}>
-        <Head>
-          <title>Cuidando Nuestro Bolsillo</title>
-          <meta
-            name="description"
-            content="Colaboramos entre todos para ahorrar en Rio Grande!"
-          />
-          <link rel="icon" href="/favicon.svg" />
-        </Head>
-        <Component {...pageProps} />
-      </PrimeReactProvider>
-    </SessionProvider>
+    <>
+      <Head>
+        <title>Cuidando Nuestro Bolsillo</title>
+      </Head>
+      <SessionProvider session={session}>
+        <CssBaseline />
+        <MUIProvider {...pageProps}>
+          {inputGlobalStyles}
+          <Component {...pageProps} />
+        </MUIProvider>
+      </SessionProvider>
+    </>
   );
 };
 
