@@ -1,7 +1,13 @@
+import { FacebookRounded as FacebookIcon } from "@mui/icons-material";
+import { LoadingButton, type LoadingButtonProps } from "@mui/lab";
+import { styled } from "@mui/material/styles";
 import { signIn } from "next-auth/react";
-import { PrimeIcons } from "primereact/api";
-import { Button } from "primereact/button";
 import { useState } from "react";
+
+const LoadingStyledButton = styled(LoadingButton)<LoadingButtonProps>(() => ({
+  color: "#fff",
+  backgroundColor: "#1877f2",
+}));
 
 export default function FacebookButton({
   callbackUrl,
@@ -18,14 +24,14 @@ export default function FacebookButton({
   }
 
   return (
-    <Button
-      type="button"
-      label="Acceder con Facebook"
-      icon={
-        <i className={`${PrimeIcons.FACEBOOK} bg-[#2374f2] text-[20px]`}></i>
-      }
-      onClick={trySignIn}
+    <LoadingStyledButton
       loading={loading}
-    ></Button>
+      variant="contained"
+      loadingPosition="start"
+      startIcon={<FacebookIcon />}
+      onClick={trySignIn}
+    >
+      Acceder con Facebook
+    </LoadingStyledButton>
   );
 }

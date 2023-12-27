@@ -1,8 +1,6 @@
+import { Box, Container, Stack, Typography } from "@mui/material";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { PrimeIcons } from "primereact/api";
-import { Button } from "primereact/button";
-import { Card } from "primereact/card";
 import { useEffect } from "react";
 import FacebookButton from "~/components/LoginButtons/FacebookButton";
 import GoogleButton from "~/components/LoginButtons/GoogleButton";
@@ -27,47 +25,38 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col">
-      <div className="flex grow items-stretch justify-center sm:items-center">
-        <div className="flex w-full sm:w-96">
-          <Card
-            title={
-              <div className="flex items-center gap-2">
-                <Button
-                  type="button"
-                  className="text-black"
-                  aria-label="Back"
-                  icon={PrimeIcons.ARROW_LEFT}
-                  onClick={() => router.back()}
-                  rounded
-                  text
-                />
-                <span>Acceder</span>
-              </div>
-            }
-            className="w-full grow border-2 border-zinc-100 shadow-none sm:border-solid sm:shadow-xl"
-            pt={{
-              body: { className: "h-full flex flex-col items-stretch" },
-              content: { className: "grow" },
-            }}
-          >
-            <h1 className="text-center">Precios RG</h1>
-            <div className="mb-14 flex w-full justify-center">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                className="m-auto text-center"
-                width={200}
-                src="/favicon.svg"
-                alt=""
-              />
-            </div>
-            <div className="flex flex-col gap-4">
-              <FacebookButton />
-              <GoogleButton />
-            </div>
-          </Card>
-        </div>
-      </div>
-    </main>
+    <Container maxWidth="sm">
+      <Stack alignItems="center">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className="h-56 w-56 pe-8 text-center" src="/favicon.svg" alt="" />
+      </Stack>
+      <Box marginBottom={5}>
+        <Typography component="h1" variant="h3" textAlign="center" gutterBottom>
+          Precios RG
+        </Typography>
+      </Box>
+      <Box marginBottom={10}>
+        <Typography
+          component="h2"
+          fontSize={20}
+          fontWeight={700}
+          textAlign="center"
+        >
+          Bienvenido
+        </Typography>
+        <Typography variant="body1" textAlign="center">
+          Para comenzar primero debe iniciar sesión
+        </Typography>
+      </Box>
+      <Stack
+        direction="column"
+        spacing={2}
+        marginTop={3}
+        justifyContent="center"
+      >
+        <FacebookButton />
+        <GoogleButton />
+      </Stack>
+    </Container>
   );
 }
