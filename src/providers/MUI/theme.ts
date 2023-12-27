@@ -49,9 +49,6 @@ export const theme = createTheme({
   components: {
     MuiButton: {
       defaultProps: {
-        sx: {
-          height: "3em",
-        },
         disableElevation: true,
       },
     },
