@@ -1,18 +1,13 @@
 import { Box, Button, Grid, TextField, Typography } from "@mui/material";
-import { useSession } from "next-auth/react";
+import { type GetServerSideProps } from "next";
 import { useState } from "react";
-import LoadingPage from "../components/LoadingPage";
 import PostCard from "../components/PostCard";
 import Layout from "../components/layout/Layout";
 import { posts } from "../data/posts";
+import { getServerAuthSession } from "../server/auth";
 
 export default function HomePage() {
-  const { status } = useSession({ required: true });
   const [searchValue, setSearchValue] = useState<string>("");
-
-  if (status === "loading") {
-    return <LoadingPage />;
-  }
 
   return (
     <Layout containerProps={{ sx: { p: 0 } }}>
@@ -50,3 +45,21 @@ export default function HomePage() {
     </Layout>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const session = await getServerAuthSession(ctx);
+  if (session) {
+    return {
+      props: {
+        session,
+      },
+    };
+  }
+
+  return {
+    redirect: {
+      destination: "/auth/login",
+      permanent: false,
+    },
+  };
+};
