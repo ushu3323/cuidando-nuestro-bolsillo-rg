@@ -18,7 +18,7 @@ export default function NewOfferPage() {
   const router = useRouter();
   const toast = useRef<Toast>(null);
 
-  const { mutateAsync, error } = api.offer.create.useMutation({
+  const { mutateAsync, error } = api.post.create.useMutation({
     cacheTime: 0,
   });
 
@@ -30,6 +30,7 @@ export default function NewOfferPage() {
       productId: values.productId,
       commerceId: values.commerceId,
       price: values.price,
+      image: "",
     })
       .then((offer) => {
         console.log(offer);

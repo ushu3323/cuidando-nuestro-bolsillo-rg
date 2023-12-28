@@ -5,10 +5,10 @@ import { Ripple } from "primereact/ripple";
 import { api, type RouterOutputs } from "~/utils/api";
 
 export default function ProductsList() {
-  const { data: offers, isLoading } = api.offer.getDaily.useQuery();
+  const { data: posts, isLoading } = api.post.getDaily.useQuery();
 
   const offerItemTemplate = (
-    offer: RouterOutputs["offer"]["getDaily"][number],
+    offer: RouterOutputs["post"]["getDaily"][number],
   ) => {
     return (
       <Link
@@ -44,7 +44,7 @@ export default function ProductsList() {
 
   return (
     <DataScroller
-      value={offers}
+      value={posts}
       buffer={0.5}
       rows={5}
       itemTemplate={offerItemTemplate}

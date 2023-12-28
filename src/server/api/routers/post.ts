@@ -6,7 +6,7 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 
-export const offerRouter = createTRPCRouter({
+export const postsRouter = createTRPCRouter({
   create: protectedProcedure
     .input(
       z.object({
@@ -18,13 +18,17 @@ export const offerRouter = createTRPCRouter({
           .string()
           .nonempty({ message: "El comercio no debe quedar vacio" })
           .pipe(z.string().uuid()),
+        image: z
+          .string()
+          .nonempty({ message: "La imagen es requerida" })
+          .url({ message: "Url invalido" }),
         price: z
           .number({ invalid_type_error: "Debe ingresar el precio" })
           .positive({ message: "Ingrese un precio valido" }),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.offer.create({
+      return ctx.db.post.create({
         data: {
           product: {
             connect: { id: input.productId },
@@ -34,13 +38,18 @@ export const offerRouter = createTRPCRouter({
               id: input.commerceId,
             },
           },
+          image: input.image,
           price: new Prisma.Decimal(input.price),
-          authorUID: ctx.session.user.id,
+          author: {
+            connect: {
+              id: ctx.session.user.id,
+            },
+          },
         },
       });
     }),
   getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.db.offer.findMany({
+    return ctx.db.post.findMany({
       select: {
         id: true,
         product: true,
@@ -53,7 +62,7 @@ export const offerRouter = createTRPCRouter({
   getDaily: publicProcedure.query(({ ctx }) => {
     const now = new Date();
     now.setHours(0, 0, 0, 0);
-    return ctx.db.offer.findMany({
+    return ctx.db.post.findMany({
       orderBy: [{ price: "asc" }, { publishDate: "desc" }],
       distinct: "productId",
       select: {
@@ -72,7 +81,7 @@ export const offerRouter = createTRPCRouter({
         where: { id: input.productId },
         include: {
           category: true,
-          offers: {
+          posts: {
             select: {
               id: true,
               commerce: true,
