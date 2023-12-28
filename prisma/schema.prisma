@@ -26,6 +26,7 @@ model Product {
 
 model Post {
     id         String   @id @default(dbgenerated("gen_random_uuid()"))
+    image      String
     productId  String
     product    Product  @relation(fields: [productId], references: [id])
     commerceId String
