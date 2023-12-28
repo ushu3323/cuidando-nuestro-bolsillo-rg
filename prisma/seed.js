@@ -14,7 +14,7 @@ const prisma = new PrismaClient();
 
 /**
  * @function
- * @template {Record<string, Prisma.CommerceCreateWithoutOffersInput>} InputType
+ * @template {Record<string, Prisma.CommerceCreateWithoutPostsInput>} InputType
  * @param {InputType} input
  * @returns {Promise<Record<keyof InputType, Prisma.$CommercePayload['scalars']>>}
  */
@@ -75,7 +75,7 @@ async function createCategories(input) {
 
 /**
  * @function
- * @template {Record<string, Prisma.ProductCreateWithoutOffersInput & {category: Prisma.$CategoryPayload['scalars']}>} InputType
+ * @template {Record<string, Prisma.ProductCreateWithoutPostsInput & {category: Prisma.$CategoryPayload['scalars']}>} InputType
  * @param {InputType} input
  * @returns {Promise<Record<keyof InputType, Prisma.$ProductPayload['scalars']>>}
  */
@@ -151,35 +151,6 @@ async function main() {
       name: "Leche 1L",
       category: Categories.LACTEOS,
     },
-  });
-
-  await prisma.offer.createMany({
-    data: [
-      {
-        commerceId: Commerces.BLUE.id,
-        productId: Products.MAPLE_HUEVOS.id,
-        price: 2500,
-        authorUID: "",
-      },
-      {
-        commerceId: Commerces.RED.id,
-        productId: Products.MAPLE_HUEVOS.id,
-        price: 2250,
-        authorUID: "",
-      },
-      {
-        commerceId: Commerces.NEW_BLUE.id,
-        productId: Products.LECHE_1L.id,
-        price: 716,
-        authorUID: "",
-      },
-      {
-        commerceId: Commerces.NEW_RED.id,
-        productId: Products.LECHE_1L.id,
-        price: 800,
-        authorUID: "",
-      },
-    ],
   });
 }
 
