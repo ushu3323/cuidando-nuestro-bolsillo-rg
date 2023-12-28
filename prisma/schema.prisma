@@ -31,7 +31,8 @@ model Post {
     commerceId String
     commerce   Commerce @relation(fields: [commerceId], references: [id], onDelete: Restrict)
     price      Decimal  @db.Decimal(20, 2)
-    authorUID  String
+    authorId   String
+    author     User     @relation(fields: [authorId], references: [id], onDelete: Restrict)
 
     publishDate DateTime @default(now())
 }
@@ -79,6 +80,8 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
+
+    posts Post[]
 }
 
 model VerificationToken {
