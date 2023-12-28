@@ -22,10 +22,23 @@ model Product {
     categoryId String
     category   Category @relation(fields: [categoryId], references: [id])
     offers     Offer[]
+    posts      Post[]
 }
 
 // Oferta
 model Offer {
+    id         String   @id @default(dbgenerated("gen_random_uuid()"))
+    productId  String
+    product    Product  @relation(fields: [productId], references: [id])
+    commerceId String
+    commerce   Commerce @relation(fields: [commerceId], references: [id], onDelete: Restrict)
+    price      Decimal  @db.Decimal(20, 2)
+    authorUID  String
+
+    publishDate DateTime @default(now())
+}
+
+model Post {
     id         String   @id @default(dbgenerated("gen_random_uuid()"))
     productId  String
     product    Product  @relation(fields: [productId], references: [id])
@@ -43,6 +56,7 @@ model Commerce {
     address      String
     observations String?
     offers       Offer[]
+    posts        Post[]
 }
 
 // Neccessary for Next auth
