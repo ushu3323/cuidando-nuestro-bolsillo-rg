@@ -5,14 +5,13 @@ import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { Toast } from "primereact/toast";
 import { useRef } from "react";
-import { type NewOfferFormProps } from "~/components/NewOfferForm";
-import { type AppRouter } from "~/server/api/root";
-import { getServerAuthSession } from "~/server/auth";
-import { api } from "~/utils/api";
 import {
   NewPostForm,
   type NewPostFormFields,
-} from "../../components/posts/NewPostForm";
+} from "~/components/posts/NewPostForm";
+import { type AppRouter } from "~/server/api/root";
+import { getServerAuthSession } from "~/server/auth";
+import { api } from "~/utils/api";
 
 export default function NewPostPage() {
   const router = useRouter();
@@ -24,7 +23,7 @@ export default function NewPostPage() {
 
   const handleOnSubmit = (
     values: NewPostFormFields,
-    { setErrors, setSubmitting }: FormikHelpers<NewOfferFormProps>,
+    { setErrors, setSubmitting }: FormikHelpers<NewPostFormFields>,
   ) => {
     mutateAsync({
       productId: values.productId,
