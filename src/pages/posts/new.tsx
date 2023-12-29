@@ -1,10 +1,9 @@
-import { Box } from "@mui/material";
+import { Box, Snackbar } from "@mui/material";
 import { type TRPCClientError } from "@trpc/client";
 import { type FormikHelpers } from "formik";
 import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
-import { Toast } from "primereact/toast";
-import { useRef } from "react";
+import { useState } from "react";
 import {
   NewPostForm,
   type NewPostFormFields,
@@ -15,8 +14,8 @@ import { api } from "~/utils/api";
 
 export default function NewPostPage() {
   const router = useRouter();
-  const toast = useRef<Toast>(null);
-
+  const [showSnackbar, setShowSnackbar] = useState(false);
+  const [snackbarMsg, setSnackbarMsg] = useState("");
   const { mutateAsync, error } = api.post.create.useMutation({
     cacheTime: 0,
   });
@@ -47,13 +46,24 @@ export default function NewPostPage() {
           setSubmitting(false);
           return;
         }
+        setShowSnackbar(true);
+        setSnackbarMsg(
+          "Hubo un error al intentar publicar, intente de nuevo en unos minutos",
+        );
       });
   };
 
+  const handleSnackbarClose = () => setShowSnackbar(false);
+
   return (
     <Box sx={{ pt: 2 }}>
-      <Toast ref={toast} />
       <NewPostForm onSubmit={handleOnSubmit} />
+      <Snackbar
+        open={showSnackbar}
+        message={snackbarMsg}
+        autoHideDuration={3500}
+        onClose={handleSnackbarClose}
+      />
     </Box>
   );
 }
