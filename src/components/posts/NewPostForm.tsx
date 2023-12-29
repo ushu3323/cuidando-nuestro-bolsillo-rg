@@ -16,7 +16,7 @@ export function NewPostForm({
   onSubmit: (
     values: NewPostFormFields,
     formikHelpers: FormikHelpers<NewPostFormFields>,
-  ) => void;
+  ) => void | Promise<void>;
 }) {
   const {
     values,

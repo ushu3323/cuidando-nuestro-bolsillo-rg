@@ -16,14 +16,14 @@ export default function NewPostPage() {
   const router = useRouter();
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [snackbarMsg, setSnackbarMsg] = useState("");
-  const { mutateAsync, error } = api.post.create.useMutation({
+  const { mutateAsync } = api.post.create.useMutation({
     cacheTime: 0,
   });
 
   const handleOnSubmit = (
     values: NewPostFormFields,
-    { setErrors, setSubmitting }: FormikHelpers<NewPostFormFields>,
-  ) => {
+    { setErrors }: FormikHelpers<NewPostFormFields>,
+  ) =>
     mutateAsync({
       productId: values.productId,
       commerceId: values.commerceId,
@@ -43,7 +43,6 @@ export default function NewPostPage() {
             commerceId: fieldErrors.commerceId?.join("\n"),
             price: fieldErrors.price?.join("\n"),
           });
-          setSubmitting(false);
           return;
         }
         setShowSnackbar(true);
@@ -51,7 +50,6 @@ export default function NewPostPage() {
           "Hubo un error al intentar publicar, intente de nuevo en unos minutos",
         );
       });
-  };
 
   const handleSnackbarClose = () => setShowSnackbar(false);
 
