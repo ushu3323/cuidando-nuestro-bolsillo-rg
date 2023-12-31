@@ -22,9 +22,6 @@ export const env = createEnv({
     S3_BUCKET_NAME: z.string().min(1),
     S3_ENDPOINT_URL: z.string().url(),
     S3_BUCKET_URL: z.string().url(),
-    FIREBASE_ADMIN_PROJECT_ID: z.string().nonempty(),
-    FIREBASE_ADMIN_CLIENT_EMAIL: z.string().nonempty(),
-    FIREBASE_ADMIN_PRIVATE_KEY: z.string().nonempty(),
     NEXTAUTH_SECRET:
       process.env.NODE_ENV === "production"
         ? z.string()
@@ -66,9 +63,6 @@ export const env = createEnv({
     S3_BUCKET_NAME: process.env.S3_BUCKET_NAME,
     S3_ENDPOINT_URL: process.env.S3_ENDPOINT_URL,
     S3_BUCKET_URL: process.env.S3_BUCKET_URL,
-    FIREBASE_ADMIN_PROJECT_ID: process.env.FIREBASE_ADMIN_PROJECT_ID,
-    FIREBASE_ADMIN_CLIENT_EMAIL: process.env.FIREBASE_ADMIN_CLIENT_EMAIL,
-    FIREBASE_ADMIN_PRIVATE_KEY: process.env.FIREBASE_ADMIN_PRIVATE_KEY,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,
     FACEBOOK_CLIENT_ID: process.env.FACEBOOK_CLIENT_ID,
