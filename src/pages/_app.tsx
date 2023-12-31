@@ -4,6 +4,7 @@ import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
 import Head from "next/head";
 import { api } from "~/utils/api";
+import Layout, { type LayoutProps } from "../components/layout/Layout";
 import MUIProvider from "../providers/MUI/MUIProvider";
 
 import "~/styles/globals.css";
@@ -22,6 +23,8 @@ const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
 }) => {
+  const layoutProps = (Component as unknown as { layoutProps?: LayoutProps })
+    .layoutProps;
   return (
     <>
       <Head>
@@ -31,7 +34,9 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <CssBaseline />
         <MUIProvider {...pageProps}>
           {inputGlobalStyles}
-          <Component {...pageProps} />
+          <Layout {...layoutProps}>
+            <Component {...pageProps} />
+          </Layout>
         </MUIProvider>
       </SessionProvider>
     </>

@@ -3,7 +3,7 @@ import { DataTable } from "primereact/datatable";
 import { api } from "../utils/api";
 
 export default function ProductsTable() {
-  const { data, isLoading } = api.offer.getAll.useQuery();
+  const { data, isLoading } = api.post.getAll.useQuery();
   type Product = NonNullable<typeof data>[number];
 
   return (

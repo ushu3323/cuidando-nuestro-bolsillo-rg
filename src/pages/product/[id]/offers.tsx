@@ -9,7 +9,7 @@ import { api } from "~/utils/api";
 export default function ProductOffers() {
   const router = useRouter();
 
-  const { data, isLoading, error } = api.offer.getByProduct.useQuery(
+  const { data, isLoading, error } = api.post.getByProduct.useQuery(
     {
       productId: router.query.id as string,
     },
@@ -27,9 +27,7 @@ export default function ProductOffers() {
   );
 
   if (isLoading) {
-    return (
-      <LoadingPage/>
-    );
+    return <LoadingPage />;
   }
 
   switch (error?.data?.code) {
@@ -43,7 +41,7 @@ export default function ProductOffers() {
 
   const product = data!;
 
-  type Offer = NonNullable<typeof product>["offers"][number];
+  type Offer = NonNullable<Required<typeof product>>["posts"][number];
 
   return (
     <div className="m-auto flex h-screen w-full flex-col sm:p-4 md:w-4/5 lg:max-w-2xl">
@@ -64,7 +62,7 @@ export default function ProductOffers() {
       </div>
       <div className="overflow-y-scroll">
         <DataTable
-          value={product.offers}
+          value={product.posts}
           sortField="price"
           sortOrder={1}
           removableSort
