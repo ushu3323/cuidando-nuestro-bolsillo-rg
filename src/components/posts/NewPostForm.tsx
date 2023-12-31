@@ -3,12 +3,10 @@ import { Autocomplete, InputAdornment, TextField } from "@mui/material";
 import { useFormik, type FormikHelpers } from "formik";
 import { NumericFormat } from "react-number-format";
 import { api, type RouterOutputs } from "~/utils/api";
+import ImageInput from "../inputs/ImagePicker";
+import { NewPostFormSchema, type NewPostFormFields } from "./NewPostFormSchema";
 
-export interface NewPostFormFields {
-  productId: string;
-  commerceId: string;
-  price: number;
-}
+export { type NewPostFormFields } from "./NewPostFormSchema";
 
 export function NewPostForm({
   onSubmit,
@@ -24,22 +22,21 @@ export function NewPostForm({
     touched,
     initialValues,
     handleSubmit,
-    handleChange,
     setFieldValue,
     isSubmitting,
   } = useFormik<NewPostFormFields>({
     initialValues: {
       productId: "",
       commerceId: "",
+      image: null!,
       price: 0,
     },
     validate(formikValues) {
-      const formikErrors: Partial<Record<keyof NewPostFormFields, string>> = {};
-      if (formikValues.productId.length == 0) {
-        formikErrors.productId = "Seleccione un producto";
+      const result = NewPostFormSchema.safeParse(formikValues);
+      if (result.success) {
+        return;
       }
-
-      return formikErrors;
+      return result.error.formErrors.fieldErrors;
     },
     onSubmit: onSubmit,
     validateOnBlur: false,
@@ -57,7 +54,7 @@ export function NewPostForm({
     field: keyof NewPostFormFields,
     opts: { ignoreTouched: boolean } = { ignoreTouched: false },
   ) => {
-    const error = errors[field];
+    const error = errors[field] as string | undefined;
     if (isFieldInvalid(field, { ignoreTouched: opts.ignoreTouched })) {
       return error;
     }
@@ -78,6 +75,16 @@ export function NewPostForm({
 
   return (
     <form onSubmit={handleSubmit} autoComplete="off" className="w-full">
+      <ImageInput
+        id="image"
+        name="image"
+        error={isFieldInvalid("image")}
+        helpText={getFieldErrorMessages("image")}
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          void setFieldValueSecure("image", file!);
+        }}
+      />
       <Autocomplete
         id="productId"
         loading={productsQuery.isLoading}
