@@ -70,7 +70,18 @@ const validateS3image = async (imageKeyWithoutPrefix: string) => {
 
 export const postsRouter = createTRPCRouter({
   getImageSignedUrl: protectedProcedure
-    .input(z.object({ mimetype: z.string(), length: z.number() }))
+    .input(
+      z.object({
+        mimetype: z
+          .string()
+          .refine(
+            (value) =>
+              !!["image/jpeg", "image/jpg", "image/png"].includes(value),
+            { message: "Tipo de imagen invalido" },
+          ),
+        length: z.number(),
+      }),
+    )
     .query(async ({ input, ctx }) => {
       const key = `${randomUUID()}`;
       const expiresIn = 3600;

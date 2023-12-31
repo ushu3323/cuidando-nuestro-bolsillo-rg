@@ -78,6 +78,7 @@ export function NewPostForm({
       <ImageInput
         id="image"
         name="image"
+        accept="image/png, image/jpg, image/jpeg"
         error={isFieldInvalid("image")}
         helpText={getFieldErrorMessages("image")}
         onChange={(e) => {
