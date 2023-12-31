@@ -1,15 +1,52 @@
 import { Add } from "@mui/icons-material";
-import { Box, Button, Fab, Grid, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Fab,
+  Grid,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { type GetServerSideProps } from "next";
 import { useState } from "react";
 import { NextLinkComposed } from "../components/NextLinkComposed";
 import PostCard from "../components/PostCard";
 import { LayoutProps } from "../components/layout/Layout";
-import { posts } from "../data/posts";
 import { getServerAuthSession } from "../server/auth";
+import { api } from "../utils/api";
 
 export default function HomePage() {
   const [searchValue, setSearchValue] = useState<string>("");
+  const dailyQuery = api.post.getDailyBestOffers.useQuery();
+
+  const DailyPostsGrid = () => {
+    if (dailyQuery.isLoading) {
+      return <CircularProgress />;
+    }
+
+    if (!dailyQuery.data) {
+      return (
+        <Box>
+          <Typography variant="body1">No hay ofertas disponibles</Typography>
+        </Box>
+      );
+    }
+    return (
+      <Grid container columns={2} spacing={2} p={1}>
+        {dailyQuery.data.map((post) => (
+          <Grid key={post.id} item xs={1}>
+            <PostCard
+              post={{
+                ...post,
+                price: post.price.toNumber(),
+              }}
+            />
+          </Grid>
+        ))}
+      </Grid>
+    );
+  };
 
   return (
     <main>
@@ -34,14 +71,8 @@ export default function HomePage() {
         <Typography component="h2" variant="h5" fontWeight={700}>
           Mejores ofertas
         </Typography>
+        <DailyPostsGrid />
       </Box>
-      <Grid container columns={2} spacing={2} p={1}>
-        {posts.map((post) => (
-          <Grid key={post.id} item xs={1}>
-            <PostCard post={post} />
-          </Grid>
-        ))}
-      </Grid>
     </main>
   );
 }

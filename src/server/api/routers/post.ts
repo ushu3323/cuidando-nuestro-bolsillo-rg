@@ -141,11 +141,16 @@ export const postsRouter = createTRPCRouter({
       },
     });
   }),
-  getDaily: publicProcedure.query(({ ctx }) => {
+  getDailyBestOffers: publicProcedure.query(({ ctx }) => {
     const now = new Date();
     now.setHours(0, 0, 0, 0);
     return ctx.db.post.findMany({
       orderBy: [{ price: "asc" }, { publishDate: "desc" }],
+      where: {
+        publishDate: {
+          gte: now,
+        },
+      },
       distinct: "productId",
       select: {
         id: true,
@@ -153,6 +158,7 @@ export const postsRouter = createTRPCRouter({
         commerce: true,
         price: true,
         publishDate: true,
+        image: true,
       },
     });
   }),

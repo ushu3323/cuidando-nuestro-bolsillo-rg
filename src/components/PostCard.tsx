@@ -6,9 +6,17 @@ import {
   CardMedia,
   Typography,
 } from "@mui/material";
-import { type Post } from "../data/posts";
 
-export default function PostCard({ post }: { post: Post }) {
+interface Props {
+  post: {
+    product: { name: string };
+    commerce: { name: string; address: string };
+    image: string;
+    price: number;
+  };
+}
+
+export default function PostCard({ post }: Props) {
   return (
     <Card sx={{ height: 276 }}>
       <CardActionArea className="flex h-full flex-col items-start">
@@ -33,7 +41,7 @@ export default function PostCard({ post }: { post: Post }) {
             </Typography>
           </Box>
           <Typography variant="h6" color="text.secondary">
-            {post.price.toNumber().toLocaleString("es-AR", {
+            {post.price.toLocaleString("es-AR", {
               style: "currency",
               currency: "ARS",
             })}
