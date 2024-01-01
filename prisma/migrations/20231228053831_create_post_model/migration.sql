@@ -4,7 +4,8 @@ CREATE TABLE "Post" (
     "productId" TEXT NOT NULL,
     "commerceId" TEXT NOT NULL,
     "price" DECIMAL(20,2) NOT NULL,
-    "authorUID" TEXT NOT NULL,
+    "authorId" TEXT NOT NULL,
+    "image" TEXT NOT NULL,
     "publishDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Post_pkey" PRIMARY KEY ("id")
@@ -15,3 +16,6 @@ ALTER TABLE "Post" ADD CONSTRAINT "Post_productId_fkey" FOREIGN KEY ("productId"
 
 -- AddForeignKey
 ALTER TABLE "Post" ADD CONSTRAINT "Post_commerceId_fkey" FOREIGN KEY ("commerceId") REFERENCES "Commerce"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+--AddForeignKey
+ALTER TABLE "Post" ADD CONSTRAINT "Post_authorId_fkey" FOREIGN KEY ("authorId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

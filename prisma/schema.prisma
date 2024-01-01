@@ -22,6 +22,7 @@ model Product {
     categoryId String
     category   Category @relation(fields: [categoryId], references: [id])
     posts      Post[]
+    Offer      Offer[]  @ignore
 }
 
 model Post {
@@ -44,6 +45,7 @@ model Commerce {
     address      String
     observations String?
     posts        Post[]
+    Offer        Offer[] @ignore
 }
 
 // Neccessary for Next auth
@@ -91,4 +93,17 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Offer {
+    id          String   @id @default(dbgenerated("gen_random_uuid()"))
+    productId   String
+    commerceId  String
+    price       Decimal  @db.Decimal(20, 2)
+    publishDate DateTime @default(now())
+    authorUID   String
+    Commerce    Commerce @relation(fields: [commerceId], references: [id])
+    Product     Product  @relation(fields: [productId], references: [id])
+
+    @@ignore
 }
