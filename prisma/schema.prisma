@@ -48,6 +48,11 @@ model Commerce {
     Offer        Offer[] @ignore
 }
 
+enum Role {
+    ADMIN
+    USER
+}
+
 // Neccessary for Next auth
 model Account {
     id                String  @id @default(cuid())
@@ -83,8 +88,8 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
-
-    posts Post[]
+    role          Role      @default(USER)
+    posts         Post[]
 }
 
 model VerificationToken {
