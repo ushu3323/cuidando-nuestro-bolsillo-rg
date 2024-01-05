@@ -2,7 +2,7 @@
 import { AppBar, CircularProgress, Toolbar, Typography } from "@mui/material";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import AvatarMenu from "./AvatarMenu";
+import AvatarMenu from "~/components/layout/Header/AvatarMenu";
 
 export default function Header() {
   const { data, status } = useSession();

@@ -1,4 +1,5 @@
-import { Logout as LogoutIcon } from "@mui/icons-material";
+"use client";
+import { AdminPanelSettings, Logout as LogoutIcon } from "@mui/icons-material";
 import {
   Avatar,
   Divider,
@@ -11,25 +12,37 @@ import {
 } from "@mui/material";
 import { type Session } from "next-auth";
 import { signOut } from "next-auth/react";
-import { useRef, useState, type ReactNode } from "react";
+import { useRouter } from "next/navigation";
+import { useMemo, useRef, useState, type ReactNode } from "react";
 
-interface MenuOption {
+type MenuOption = {
   label: string;
   icon: ReactNode;
   command: () => void;
-}
+};
 
 export default function AvatarMenu({ user }: { user: Session["user"] }) {
+  const router = useRouter();
   const anchorRef = useRef<HTMLButtonElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const options: MenuOption[] = [
-    {
-      label: "Cerrar sesion",
-      icon: <LogoutIcon />,
-      command: () => void signOut(),
-    },
-  ];
+  const options = useMemo<MenuOption[]>(() => {
+    const options: MenuOption[] = [
+      {
+        label: "Cerrar sesion",
+        icon: <LogoutIcon />,
+        command: () => void signOut({ callbackUrl: "/auth/login" }),
+      },
+    ];
+    if (user.role === "ADMIN") {
+      options.push({
+        label: "Administración",
+        icon: <AdminPanelSettings />,
+        command: () => router.push("/admin"),
+      });
+    }
+    return options;
+  }, [user]);
 
   const handleMenu = () => {
     setMenuOpen(true);
@@ -79,26 +92,4 @@ export default function AvatarMenu({ user }: { user: Session["user"] }) {
       </Menu>
     </div>
   );
-
-  /* return (
-    <>
-      <Menu ref={menuRef} model={menuItems} popup />
-      <Button
-        onClick={(event) => menuRef.current?.toggle(event)}
-        style={{ height: "100%", padding: 0 }}
-        size="small"
-        text
-      >
-        <div className="pe-5 text-black">{user.name}</div>
-        <Avatar
-          image={user.image ?? undefined}
-          label={user.name?.charAt(0)}
-          className="me-3"
-          size="large"
-          shape="circle"
-        />
-        <i className="pi pi-angle-down"></i>
-      </Button>
-    </>
-  ); */
 }
