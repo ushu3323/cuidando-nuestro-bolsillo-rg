@@ -11,7 +11,7 @@ export interface DashboardCounterCardProps {
   icon: React.JSX.Element;
   value: number;
 }
-export default function DashboardCounterCard({
+export default function StadisticCounterCard({
   label,
   icon,
   value,

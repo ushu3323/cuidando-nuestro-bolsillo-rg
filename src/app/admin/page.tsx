@@ -6,7 +6,7 @@ import {
   Storefront,
 } from "@mui/icons-material";
 import { Box, Grid, Typography } from "@mui/material";
-import DashboardCounterCard from "./components/DashboardStatsCard";
+import StadisticCounterCard from "./components/dashboard/StadisticCounterCard";
 
 export default function AdminDashboard() {
   return (
@@ -17,35 +17,35 @@ export default function AdminDashboard() {
         </Typography>
         <Grid container columns={2} spacing={4}>
           <Grid item xs={2} md={1}>
-            <DashboardCounterCard
+            <StadisticCounterCard
               label="Usuarios"
               icon={<People sx={{ fontSize: "calc(2.5rem + 2vw)" }} />}
               value={20302}
             />
           </Grid>
           <Grid item xs={2} md={1}>
-            <DashboardCounterCard
+            <StadisticCounterCard
               label="Publicaciones"
               icon={<ArtTrack sx={{ fontSize: "calc(2.5rem + 2vw)" }} />}
               value={13}
             />
           </Grid>
           <Grid item xs={2} md={1}>
-            <DashboardCounterCard
+            <StadisticCounterCard
               label="Comercios"
               icon={<Storefront sx={{ fontSize: "calc(2.5rem + 2vw)" }} />}
               value={242}
             />
           </Grid>
           <Grid item xs={2} md={1}>
-            <DashboardCounterCard
+            <StadisticCounterCard
               label="Productos"
               icon={<Fastfood sx={{ fontSize: "calc(2.5rem + 2vw)" }} />}
               value={123}
             />
           </Grid>
           <Grid item xs={2} md={1}>
-            <DashboardCounterCard
+            <StadisticCounterCard
               label="Categorias"
               icon={<Category sx={{ fontSize: "calc(2.5rem + 2vw)" }} />}
               value={123}

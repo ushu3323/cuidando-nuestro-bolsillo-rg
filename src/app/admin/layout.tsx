@@ -2,7 +2,7 @@ import { Container } from "@mui/material";
 import { getServerSession } from "next-auth";
 import { notFound } from "next/navigation";
 import type { PropsWithChildren } from "react";
-import { authOptions } from "../../../server/auth";
+import { authOptions } from "~/server/auth";
 import Header from "./Header";
 
 export default async function AdminLayout({ children }: PropsWithChildren) {
