@@ -6,16 +6,17 @@ import {
   Storefront,
 } from "@mui/icons-material";
 import { Box, Grid, Typography } from "@mui/material";
-import StadisticCounterCard from "./components/dashboard/StadisticCounterCard";
+import StadisticCounterCard from "~/components/admin/StadisticCounterCard";
+import { LayoutProps } from "~/components/layout/Layout";
 
-export default function AdminDashboard() {
+export default function AdminDashboardPage() {
   return (
     <main>
       <Box py={2}>
         <Typography component="h1" variant="h4" gutterBottom>
           Administración
         </Typography>
-        <Grid container columns={2} spacing={4}>
+        <Grid container columns={2} spacing={4} py={2}>
           <Grid item xs={2} md={1}>
             <StadisticCounterCard
               label="Usuarios"
@@ -56,3 +57,9 @@ export default function AdminDashboard() {
     </main>
   );
 }
+
+AdminDashboardPage.layoutProps = {
+  containerProps: {
+    maxWidth: "md",
+  },
+} satisfies LayoutProps;
