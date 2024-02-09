@@ -43,6 +43,7 @@ export default function AdminDashboardPage() {
               label="Productos"
               icon={<Fastfood sx={{ fontSize: "calc(2.5rem + 2vw)" }} />}
               value={123}
+              href="/admin/products"
             />
           </Grid>
           <Grid item xs={2} md={1}>
