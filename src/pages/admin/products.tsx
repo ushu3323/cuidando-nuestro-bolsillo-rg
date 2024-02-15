@@ -1,5 +1,10 @@
 import { Box, Breadcrumbs, Link, Typography } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import {
+  MaterialReactTable,
+  useMaterialReactTable,
+  type MRT_ColumnDef,
+} from "material-react-table";
+import { useMemo } from "react";
 import { RouterOutputs, api } from "~/utils/api";
 import { NextLinkComposed } from "../../components/NextLinkComposed";
 
@@ -8,15 +13,40 @@ type Data = RouterOutputs["product"]["getAll"][number];
 export default function AdminProductsPage() {
   const products = api.product.getAll.useQuery();
 
-  const columns: readonly GridColDef<Data>[] = [
-    { field: "name", headerName: "Nombre", flex: 1 },
-    {
-      field: "category",
-      headerName: "Categoria",
-      flex: 2,
-      valueFormatter: (params) => params.value.name,
+  const columns = useMemo<MRT_ColumnDef<Data>[]>(
+    () => [
+      {
+        accessorKey: "name",
+        header: "Nombre",
+      },
+      {
+        accessorKey: "category.id",
+        Cell: ({ row }) => row.original.category.name,
+        header: "Categoria",
+      },
+    ],
+    [],
+  );
+
+  const table = useMaterialReactTable({
+    columns,
+    data: products.data || [],
+    getRowId: (row) => row.id,
+    createDisplayMode: "row",
+    editDisplayMode: "row",
+    positionActionsColumn: "last",
+    displayColumnDefOptions: {
+      "mrt-row-actions": {
+        muiTableHeadCellProps: { align: "center" },
+        muiTableBodyCellProps: { align: "center" },
+      },
     },
-  ];
+    enableFullScreenToggle: false,
+    state: {
+      isLoading: products.isLoading,
+      showProgressBars: products.isFetching,
+    },
+  });
 
   return (
     <main>
@@ -36,13 +66,7 @@ export default function AdminProductsPage() {
           Productos
         </Typography>
         <Box py={2} sx={{ width: "100%" }}>
-          <DataGrid
-            autoHeight
-            rowSelection={false}
-            columns={columns}
-            rows={products.data || []}
-            loading={products.isLoading}
-          />
+          <MaterialReactTable table={table} />
         </Box>
       </Box>
     </main>
