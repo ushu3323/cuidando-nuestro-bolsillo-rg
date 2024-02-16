@@ -1,5 +1,7 @@
-import { Box, Breadcrumbs, Link, Typography } from "@mui/material";
+import { Add as AddIcon } from "@mui/icons-material";
+import { Box, Breadcrumbs, Button, Link, Typography } from "@mui/material";
 import {
+  MRT_TableOptions,
   MaterialReactTable,
   useMaterialReactTable,
   type MRT_ColumnDef,
@@ -12,21 +14,40 @@ type Data = RouterOutputs["product"]["getAll"][number];
 
 export default function AdminProductsPage() {
   const products = api.product.getAll.useQuery();
+  const categories = api.product.category.getAll.useQuery();
 
+  const apiUtils = api.useContext();
   const columns = useMemo<MRT_ColumnDef<Data>[]>(
     () => [
       {
         accessorKey: "name",
         header: "Nombre",
+        enableEditing: true,
       },
       {
         accessorKey: "category.id",
         Cell: ({ row }) => row.original.category.name,
         header: "Categoria",
+        editVariant: "select",
+        editSelectOptions: categories.data?.map((category) => ({
+          label: category.name,
+          value: category.id,
+        })),
+        enableEditing: true,
       },
     ],
-    [],
+    [categories.data],
   );
+
+  const handleCreateProduct: MRT_TableOptions<Data>["onCreatingRowSave"] =
+    async ({ table, values }) => {
+      await apiUtils.client.product.create.mutate({
+        name: values.name,
+        categoryId: values["category.id"],
+      });
+      apiUtils.product.getAll.invalidate();
+      table.setCreatingRow(null);
+    };
 
   const table = useMaterialReactTable({
     columns,
@@ -42,6 +63,16 @@ export default function AdminProductsPage() {
       },
     },
     enableFullScreenToggle: false,
+    onCreatingRowSave: handleCreateProduct,
+    renderTopToolbarCustomActions: ({ table }) => (
+      <Button
+        variant="text"
+        startIcon={<AddIcon />}
+        onClick={() => table.setCreatingRow(true)}
+      >
+        Nuevo producto
+      </Button>
+    ),
     state: {
       isLoading: products.isLoading,
       showProgressBars: products.isFetching,
