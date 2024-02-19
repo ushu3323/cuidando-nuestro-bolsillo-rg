@@ -67,6 +67,7 @@ export default function AdminProductsPage() {
   );
 
   const handleCreateProduct: MRT_TableOptions<Data>["onCreatingRowSave"] =
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     async ({ table, values }) => {
       try {
         await createProduct.mutateAsync({
@@ -154,7 +155,10 @@ export default function AdminProductsPage() {
           </IconButton>
         </Tooltip>
         <Tooltip title="Delete">
-          <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
+          <IconButton
+            color="error"
+            onClick={() => void openDeleteConfirmModal(row)}
+          >
             <DeleteIcon />
           </IconButton>
         </Tooltip>
