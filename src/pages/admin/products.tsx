@@ -1,12 +1,20 @@
 import { Add as AddIcon } from "@mui/icons-material";
-import { Box, Breadcrumbs, Button, Link, Typography } from "@mui/material";
+import {
+  Box,
+  Breadcrumbs,
+  Button,
+  Link,
+  Snackbar,
+  Typography,
+} from "@mui/material";
+import { TRPCClientError } from "@trpc/client";
 import {
   MRT_TableOptions,
   MaterialReactTable,
   useMaterialReactTable,
   type MRT_ColumnDef,
 } from "material-react-table";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { RouterOutputs, api } from "~/utils/api";
 import { NextLinkComposed } from "../../components/NextLinkComposed";
 
@@ -15,10 +23,19 @@ type Data = RouterOutputs["product"]["getAll"][number];
 export default function AdminProductsPage() {
   const products = api.product.getAll.useQuery();
   const categories = api.product.category.getAll.useQuery();
+  const createProduct = api.product.create.useMutation();
+  const updateProduct = api.product.update.useMutation();
+
+  const [snackbarMsg, setSnackbarMessage] = useState<string>();
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const apiUtils = api.useContext();
   const columns = useMemo<MRT_ColumnDef<Data>[]>(
     () => [
+      {
+        accessorKey: "id",
+        header: "ID",
+      },
       {
         accessorKey: "name",
         header: "Nombre",
@@ -41,18 +58,52 @@ export default function AdminProductsPage() {
 
   const handleCreateProduct: MRT_TableOptions<Data>["onCreatingRowSave"] =
     async ({ table, values }) => {
-      await apiUtils.client.product.create.mutate({
-        name: values.name,
-        categoryId: values["category.id"],
-      });
-      apiUtils.product.getAll.invalidate();
-      table.setCreatingRow(null);
+      try {
+        await createProduct.mutateAsync({
+          name: values.name,
+          categoryId: values["category.id"],
+        });
+        table.setCreatingRow(null);
+        await apiUtils.product.getAll.invalidate();
+        table.setPageIndex(table.getPageCount() - 1);
+      } catch (error) {
+        if (error instanceof TRPCClientError) {
+          setSnackbarMessage(error.message);
+          setSnackbarOpen(true);
+        }
+        throw error;
+      }
+    };
+
+  const handleUpdateProduct: MRT_TableOptions<Data>["onEditingRowSave"] =
+    async ({ table, values, row }) => {
+      try {
+        await updateProduct.mutateAsync({
+          id: row.id,
+          name: values.name,
+          categoryId: values["category.id"],
+        });
+        table.setEditingRow(null);
+        await apiUtils.product.getAll.invalidate();
+      } catch (error) {
+        if (error instanceof TRPCClientError) {
+          setSnackbarMessage(error.message);
+          setSnackbarOpen(true);
+        }
+        throw error;
+      }
     };
 
   const table = useMaterialReactTable({
     columns,
     data: products.data || [],
     getRowId: (row) => row.id,
+    initialState: {
+      columnVisibility: {
+        id: false,
+      },
+      sorting: [{ id: "id", desc: true }],
+    },
     createDisplayMode: "row",
     editDisplayMode: "row",
     positionActionsColumn: "last",
@@ -63,6 +114,8 @@ export default function AdminProductsPage() {
       },
     },
     enableFullScreenToggle: false,
+    enableEditing: true,
+    onEditingRowSave: handleUpdateProduct,
     onCreatingRowSave: handleCreateProduct,
     renderTopToolbarCustomActions: ({ table }) => (
       <Button
@@ -75,12 +128,19 @@ export default function AdminProductsPage() {
     ),
     state: {
       isLoading: products.isLoading,
+      isSaving: createProduct.isLoading || updateProduct.isLoading,
       showProgressBars: products.isFetching,
     },
   });
 
   return (
     <main>
+      <Snackbar
+        open={snackbarOpen}
+        onClose={() => setSnackbarOpen(false)}
+        message={snackbarMsg}
+        anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
+      />
       <Box py={2}>
         <Breadcrumbs aria-label="breadcrumb">
           <Link
