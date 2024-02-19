@@ -126,7 +126,7 @@ export default function AdminProductsPage() {
   };
   const table = useMaterialReactTable({
     columns,
-    data: products.data || [],
+    data: products.data ?? [],
     getRowId: (row) => row.id,
     initialState: {
       columnVisibility: {
