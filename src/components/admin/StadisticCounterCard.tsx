@@ -10,7 +10,7 @@ import Link from "next/link";
 export interface DashboardCounterCardProps {
   label: string;
   icon: React.JSX.Element;
-  value: number;
+  value?: number;
   href?: string;
 }
 export default function StadisticCounterCard({
@@ -37,7 +37,7 @@ export default function StadisticCounterCard({
               {label}
             </Typography>
             <Typography component="div" variant="h3">
-              {value.toLocaleString()}
+              {value?.toLocaleString() ?? "-"}
             </Typography>
           </Box>
           <Box p={2}>{icon}</Box>

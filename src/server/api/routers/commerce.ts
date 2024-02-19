@@ -4,4 +4,7 @@ export const commerceRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.db.commerce.findMany();
   }),
+  getCount: publicProcedure.query(({ ctx }) => {
+    return ctx.db.commerce.count()
+  })
 });

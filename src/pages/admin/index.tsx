@@ -8,8 +8,15 @@ import {
 import { Box, Grid, Typography } from "@mui/material";
 import StadisticCounterCard from "~/components/admin/StadisticCounterCard";
 import { LayoutProps } from "~/components/layout/Layout";
+import { api } from "~/utils/api";
 
 export default function AdminDashboardPage() {
+  const { data: usersCount } = api.user.getCount.useQuery();
+  const { data: postsCount } = api.post.getCount.useQuery();
+  const { data: commercesCount } = api.commerce.getCount.useQuery();
+  const { data: productsCount } = api.product.getCount.useQuery();
+  const { data: productsCategoryCount } =
+    api.product.category.getCount.useQuery();
   return (
     <main>
       <Box py={2}>
@@ -21,28 +28,28 @@ export default function AdminDashboardPage() {
             <StadisticCounterCard
               label="Usuarios"
               icon={<People sx={{ fontSize: "calc(2.5rem + 2vw)" }} />}
-              value={20302}
+              value={usersCount}
             />
           </Grid>
           <Grid item xs={2} md={1}>
             <StadisticCounterCard
               label="Publicaciones"
               icon={<ArtTrack sx={{ fontSize: "calc(2.5rem + 2vw)" }} />}
-              value={13}
+              value={postsCount}
             />
           </Grid>
           <Grid item xs={2} md={1}>
             <StadisticCounterCard
               label="Comercios"
               icon={<Storefront sx={{ fontSize: "calc(2.5rem + 2vw)" }} />}
-              value={242}
+              value={commercesCount}
             />
           </Grid>
           <Grid item xs={2} md={1}>
             <StadisticCounterCard
               label="Productos"
               icon={<Fastfood sx={{ fontSize: "calc(2.5rem + 2vw)" }} />}
-              value={123}
+              value={productsCount}
               href="/admin/products"
             />
           </Grid>
@@ -50,7 +57,7 @@ export default function AdminDashboardPage() {
             <StadisticCounterCard
               label="Categorias"
               icon={<Category sx={{ fontSize: "calc(2.5rem + 2vw)" }} />}
-              value={123}
+              value={productsCategoryCount}
             />
           </Grid>
         </Grid>

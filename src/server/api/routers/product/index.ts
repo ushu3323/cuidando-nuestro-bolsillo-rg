@@ -32,6 +32,9 @@ export const productRouter = createTRPCRouter({
         }
       })
     }),
+  getCount: publicProcedure.query(async ({ ctx }) => {
+    return ctx.db.product.count()
+  }),
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.db.product.findMany({
       select: {
