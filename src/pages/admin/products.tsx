@@ -15,15 +15,15 @@ import {
 } from "@mui/material";
 import { TRPCClientError } from "@trpc/client";
 import {
-  MRT_TableOptions,
   MaterialReactTable,
   useMaterialReactTable,
   type MRT_ColumnDef,
   type MRT_Row,
+  type MRT_TableOptions,
 } from "material-react-table";
 import { useMemo, useState } from "react";
 import { type AppRouter } from "~/server/api/root";
-import { RouterOutputs, api } from "~/utils/api";
+import { api, type RouterOutputs } from "~/utils/api";
 import { NextLinkComposed } from "../../components/NextLinkComposed";
 
 type Data = RouterOutputs["product"]["getAll"][number];
@@ -70,8 +70,8 @@ export default function AdminProductsPage() {
     async ({ table, values }) => {
       try {
         await createProduct.mutateAsync({
-          name: values.name,
-          categoryId: values["category.id"],
+          name: values.name as string,
+          categoryId: values["category.id"] as string,
         });
         table.setCreatingRow(null);
         await apiUtils.product.getAll.invalidate();
@@ -90,8 +90,8 @@ export default function AdminProductsPage() {
       try {
         await updateProduct.mutateAsync({
           id: row.id,
-          name: values.name,
-          categoryId: values["category.id"],
+          name: values.name as string,
+          categoryId: values["category.id"] as string,
         });
         table.setEditingRow(null);
         await apiUtils.product.getAll.invalidate();

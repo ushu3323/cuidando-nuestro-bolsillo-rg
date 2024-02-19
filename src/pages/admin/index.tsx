@@ -7,7 +7,7 @@ import {
 } from "@mui/icons-material";
 import { Box, Grid, Typography } from "@mui/material";
 import StadisticCounterCard from "~/components/admin/StadisticCounterCard";
-import { LayoutProps } from "~/components/layout/Layout";
+import { type LayoutProps } from "~/components/layout/Layout";
 import { api } from "~/utils/api";
 
 export default function AdminDashboardPage() {

@@ -12,7 +12,7 @@ import { type GetServerSideProps } from "next";
 import { useState } from "react";
 import { NextLinkComposed } from "../components/NextLinkComposed";
 import PostCard from "../components/PostCard";
-import { LayoutProps } from "../components/layout/Layout";
+import { type LayoutProps } from "../components/layout/Layout";
 import { getServerAuthSession } from "../server/auth";
 import { api } from "../utils/api";
 

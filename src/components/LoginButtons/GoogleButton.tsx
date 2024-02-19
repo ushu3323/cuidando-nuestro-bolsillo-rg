@@ -1,4 +1,4 @@
-import { LoadingButton, LoadingButtonProps } from "@mui/lab";
+import { LoadingButton, type LoadingButtonProps } from "@mui/lab";
 import { createSvgIcon } from "@mui/material";
 import { alpha, styled } from "@mui/material/styles";
 import { signIn } from "next-auth/react";
