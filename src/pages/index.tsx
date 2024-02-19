@@ -21,19 +21,33 @@ export default function HomePage() {
   const dailyQuery = api.post.getDailyBestOffers.useQuery();
 
   const DailyPostsGrid = () => {
-    if (dailyQuery.isLoading) {
-      return <CircularProgress />;
-    }
-
-    if (!dailyQuery.data) {
+    if (!dailyQuery.data?.length) {
       return (
-        <Box>
-          <Typography variant="body1">No hay ofertas disponibles</Typography>
+        <Box
+          minHeight={200}
+          mx="auto"
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+        >
+          {dailyQuery.isLoading ? (
+            <CircularProgress />
+          ) : (
+            <>
+              <Typography textAlign="center" variant="subtitle1">
+                No hay ofertas el dia de hoy...
+              </Typography>
+              <Typography variant="subtitle2" color="InactiveCaptionText">
+                Se el primero en publicar!
+              </Typography>
+            </>
+          )}
         </Box>
       );
     }
     return (
-      <Grid container columns={2} spacing={2} p={1}>
+      <Grid container columns={2} spacing={2} px={1}>
         {dailyQuery.data.map((post) => (
           <Grid key={post.id} item xs={1}>
             <PostCard
@@ -68,11 +82,11 @@ export default function HomePage() {
             Buscar
           </Button>
         </Box>
-        <Typography component="h2" variant="h5" fontWeight={700}>
-          Mejores ofertas
+        <Typography component="h2" variant="h5" fontWeight={700} gutterBottom>
+          Mejores ofertas de hoy
         </Typography>
-        <DailyPostsGrid />
       </Box>
+      <DailyPostsGrid />
     </main>
   );
 }

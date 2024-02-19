@@ -68,7 +68,7 @@ const validateS3image = async (imageKeyWithoutPrefix: string) => {
   return `${env.S3_BUCKET_URL}/${imageKeyWithoutPrefix}`;
 };
 
-export const postsRouter = createTRPCRouter({
+export const postRouter = createTRPCRouter({
   getImageSignedUrl: protectedProcedure
     .input(
       z.object({
@@ -141,6 +141,9 @@ export const postsRouter = createTRPCRouter({
         },
       });
     }),
+  getCount: publicProcedure.query(({ ctx }) => {
+    return ctx.db.post.count()
+  }),
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.db.post.findMany({
       select: {

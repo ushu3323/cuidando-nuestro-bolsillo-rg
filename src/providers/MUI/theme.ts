@@ -1,4 +1,5 @@
 import { createTheme } from "@mui/material";
+import { inter } from "~/font";
 
 export const theme = createTheme({
   palette: {
@@ -47,7 +48,7 @@ export const theme = createTheme({
       textTransform: "none",
       fontSize: "1rem",
     },
-    fontFamily: "Inter",
+    fontFamily: inter.style.fontFamily,
   },
   shape: {
     borderRadius: 6,

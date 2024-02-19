@@ -1,3 +1,4 @@
+"use client";
 import { AppBar, CircularProgress, Toolbar, Typography } from "@mui/material";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
