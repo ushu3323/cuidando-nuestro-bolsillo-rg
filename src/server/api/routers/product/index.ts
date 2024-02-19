@@ -41,4 +41,20 @@ export const productRouter = createTRPCRouter({
       },
     });
   }),
+  delete: protectedProcedure
+    .input(z.object({
+      id: z.string().uuid()
+    }))
+    .mutation(async ({ input, ctx }) => {
+      return await ctx.db.product.delete({
+        where: { id: input.id },
+      }).catch((err: PrismaClientKnownRequestError) => {
+        if (err.code === "P2003") // Foreigh key constraint failed
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: "El producto ya posee publicaciones, eliminelas antes de continuar"
+          })
+        throw err;
+      })
+    })
 });

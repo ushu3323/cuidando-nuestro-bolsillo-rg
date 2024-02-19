@@ -1,10 +1,16 @@
-import { Add as AddIcon } from "@mui/icons-material";
+import {
+  Add as AddIcon,
+  Delete as DeleteIcon,
+  Edit as EditIcon,
+} from "@mui/icons-material";
 import {
   Box,
   Breadcrumbs,
   Button,
+  IconButton,
   Link,
   Snackbar,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { TRPCClientError } from "@trpc/client";
@@ -13,8 +19,10 @@ import {
   MaterialReactTable,
   useMaterialReactTable,
   type MRT_ColumnDef,
+  type MRT_Row,
 } from "material-react-table";
 import { useMemo, useState } from "react";
+import { type AppRouter } from "~/server/api/root";
 import { RouterOutputs, api } from "~/utils/api";
 import { NextLinkComposed } from "../../components/NextLinkComposed";
 
@@ -23,8 +31,10 @@ type Data = RouterOutputs["product"]["getAll"][number];
 export default function AdminProductsPage() {
   const products = api.product.getAll.useQuery();
   const categories = api.product.category.getAll.useQuery();
+
   const createProduct = api.product.create.useMutation();
   const updateProduct = api.product.update.useMutation();
+  const deleteProduct = api.product.delete.useMutation();
 
   const [snackbarMsg, setSnackbarMessage] = useState<string>();
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -94,6 +104,25 @@ export default function AdminProductsPage() {
       }
     };
 
+  const openDeleteConfirmModal = async (row: MRT_Row<Data>) => {
+    if (
+      window.confirm(
+        `Esta seguro de que desea eliminar el producto "${row.original.name}"?`,
+      )
+    ) {
+      await deleteProduct
+        .mutateAsync({ id: row.original.id })
+        .then(async () => {
+          setSnackbarMessage("Producto eliminado correctamente");
+          setSnackbarOpen(true);
+          await apiUtils.product.getAll.invalidate();
+        })
+        .catch((error: TRPCClientError<AppRouter>) => {
+          setSnackbarMessage(error.message);
+          setSnackbarOpen(true);
+        });
+    }
+  };
   const table = useMaterialReactTable({
     columns,
     data: products.data || [],
@@ -117,6 +146,20 @@ export default function AdminProductsPage() {
     enableEditing: true,
     onEditingRowSave: handleUpdateProduct,
     onCreatingRowSave: handleCreateProduct,
+    renderRowActions: ({ row }) => (
+      <Box sx={{ display: "flex", gap: "1rem" }}>
+        <Tooltip title="Edit">
+          <IconButton onClick={() => table.setEditingRow(row)}>
+            <EditIcon />
+          </IconButton>
+        </Tooltip>
+        <Tooltip title="Delete">
+          <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
+            <DeleteIcon />
+          </IconButton>
+        </Tooltip>
+      </Box>
+    ),
     renderTopToolbarCustomActions: ({ table }) => (
       <Button
         variant="text"
@@ -138,6 +181,7 @@ export default function AdminProductsPage() {
       <Snackbar
         open={snackbarOpen}
         onClose={() => setSnackbarOpen(false)}
+        autoHideDuration={8000}
         message={snackbarMsg}
         anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
       />
