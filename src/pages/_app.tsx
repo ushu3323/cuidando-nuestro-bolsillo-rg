@@ -1,24 +1,45 @@
+import { CssBaseline, GlobalStyles } from "@mui/material";
+import { type Session } from "next-auth";
+import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
-import { PrimeReactProvider, type PrimeReactPTOptions } from "primereact/api";
-import { usePassThrough } from "primereact/passthrough";
+import Head from "next/head";
 import { api } from "~/utils/api";
+import Layout, { type LayoutProps } from "../components/layout/Layout";
+import MUIProvider from "../providers/MUI/MUIProvider";
 
-import Tailwind from "primereact/passthrough/tailwind";
-import { classNames } from "primereact/utils";
 import "~/styles/globals.css";
 
-const MyApp: AppType = ({ Component, pageProps }) => {
-  const CustomTailwind = usePassThrough(Tailwind, {
-    button: {
-      loadingIcon() {
-        return classNames("animate-[spin_1500ms_linear_infinite] me-2");
+const inputGlobalStyles = (
+  <GlobalStyles
+    styles={(theme) => ({
+      body: {
+        fontFamily: theme.typography.fontFamily,
       },
-    },
-  } satisfies PrimeReactPTOptions);
+    })}
+  />
+);
+
+const MyApp: AppType<{ session: Session | null }> = ({
+  Component,
+  pageProps: { session, ...pageProps },
+}) => {
+  const layoutProps = (Component as unknown as { layoutProps?: LayoutProps })
+    .layoutProps;
   return (
-    <PrimeReactProvider value={{ unstyled: true, pt: CustomTailwind }}>
-      <Component {...pageProps} />
-    </PrimeReactProvider>
+    <>
+      <Head>
+        <title>Cuidando Nuestro Bolsillo</title>
+      </Head>
+      <SessionProvider session={session}>
+        <CssBaseline />
+        <MUIProvider {...pageProps}>
+          {inputGlobalStyles}
+          <Layout {...layoutProps}>
+            <Component {...pageProps} />
+          </Layout>
+        </MUIProvider>
+      </SessionProvider>
+    </>
   );
 };
 

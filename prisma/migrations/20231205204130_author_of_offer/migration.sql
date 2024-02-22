@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Offer" ADD COLUMN "authorUID" TEXT NOT NULL DEFAULT '';
+ALTER TABLE public."Offer" ALTER COLUMN "authorUID" DROP DEFAULT;
