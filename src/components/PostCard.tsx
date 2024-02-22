@@ -6,6 +6,7 @@ import {
   CardMedia,
   Typography,
 } from "@mui/material";
+import Link from "next/link";
 
 interface Props {
   post: {
@@ -14,12 +15,17 @@ interface Props {
     image: string;
     price: number;
   };
+  href?: string;
 }
 
-export default function PostCard({ post }: Props) {
+export default function PostCard({ post, href }: Props) {
   return (
     <Card sx={{ height: 276 }}>
-      <CardActionArea className="flex h-full flex-col items-start">
+      <CardActionArea
+        className="flex h-full flex-col items-start"
+        LinkComponent={Link}
+        {...{ href }}
+      >
         <CardMedia
           component="img"
           height="140"

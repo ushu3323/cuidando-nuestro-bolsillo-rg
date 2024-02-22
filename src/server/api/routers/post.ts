@@ -173,9 +173,28 @@ export const postRouter = createTRPCRouter({
         price: true,
         publishDate: true,
         image: true,
+        author: true,
       },
     });
   }),
+  getById: protectedProcedure
+    .input(z.object({ id: z.string().uuid() }))
+    .query(({ ctx, input }) => {
+      return ctx.db.post.findUnique({
+        where: input,
+        select: {
+          id: true,
+          product: {
+            include: { category: true }
+          },
+          commerce: true,
+          price: true,
+          publishDate: true,
+          image: true,
+          author: true,
+        },
+      })
+    }),
   getByProduct: publicProcedure
     .input(z.object({ productId: z.string().uuid() }))
     .query(({ ctx, input }) => {

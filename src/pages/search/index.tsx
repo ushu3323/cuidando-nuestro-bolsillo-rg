@@ -110,6 +110,7 @@ export default function SearchPage() {
                       ...post,
                       price: post.price.toNumber(),
                     }}
+                    href={`/posts/${post.id}`}
                   />
                 </Grid>
               ))}

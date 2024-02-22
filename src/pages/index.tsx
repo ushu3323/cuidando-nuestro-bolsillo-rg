@@ -67,6 +67,7 @@ export default function HomePage() {
                 ...post,
                 price: post.price.toNumber(),
               }}
+              href={`/posts/${post.id}`}
             />
           </Grid>
         ))}
