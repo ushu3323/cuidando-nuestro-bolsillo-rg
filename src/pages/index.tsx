@@ -9,7 +9,8 @@ import {
   Typography,
 } from "@mui/material";
 import { type GetServerSideProps } from "next";
-import { useState } from "react";
+import { useRouter } from "next/router";
+import { useState, type FormEvent } from "react";
 import { NextLinkComposed } from "../components/NextLinkComposed";
 import PostCard from "../components/PostCard";
 import { type LayoutProps } from "../components/layout/Layout";
@@ -17,8 +18,19 @@ import { getServerAuthSession } from "../server/auth";
 import { api } from "../utils/api";
 
 export default function HomePage() {
-  const [searchValue, setSearchValue] = useState<string>("");
+  const router = useRouter();
+  const [searchText, setSearchText] = useState<string>("");
   const dailyQuery = api.post.getDailyBestOffers.useQuery();
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    void router.push({
+      pathname: "/search",
+      query: {
+        query: searchText,
+      },
+    });
+  };
 
   const DailyPostsGrid = () => {
     if (!dailyQuery.data?.length) {
@@ -66,21 +78,24 @@ export default function HomePage() {
     <main>
       <Box p={2}>
         <Box mb={7}>
-          <TextField
-            id="search"
-            label="¿Que estas buscando?"
-            className="mb-5"
-            value={searchValue}
-            onChange={(event) => setSearchValue(event.target.value)}
-            fullWidth
-          />
-          <Button
-            variant="contained"
-            disabled={searchValue.length === 0}
-            fullWidth
-          >
-            Buscar
-          </Button>
+          <form onSubmit={handleSubmit}>
+            <TextField
+              id="search"
+              label="¿Que estas buscando?"
+              className="mb-5"
+              value={searchText}
+              onChange={(event) => setSearchText(event.target.value)}
+              fullWidth
+            />
+            <Button
+              variant="contained"
+              disabled={searchText.length === 0}
+              fullWidth
+              onClick={() => void router.push(`/search?query=${searchText}`)}
+            >
+              Buscar
+            </Button>
+          </form>
         </Box>
         <Typography component="h2" variant="h5" fontWeight={700} gutterBottom>
           Mejores ofertas de hoy

@@ -1,5 +1,6 @@
+import { z } from "zod";
 import { postRouter } from "~/server/api/routers/post";
-import { createTRPCRouter } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
 import { commerceRouter } from "./routers/commerce";
 import { productRouter } from "./routers/product";
 import { userRouter } from "./routers/user";
@@ -13,7 +14,27 @@ export const appRouter = createTRPCRouter({
   post: postRouter,
   commerce: commerceRouter,
   product: productRouter,
-  user: userRouter
+  user: userRouter,
+  search: protectedProcedure.input(z.object({ query: z.string() })).query(({ input, ctx }) => {
+    return ctx.db.post.findMany({
+      where: {
+        product: {
+          name: {
+            mode: "insensitive",
+            contains: input.query
+          },
+        }
+      },
+      select: {
+        id: true,
+        image: true,
+        commerce: true,
+        price: true,
+        product: true,
+        publishDate: true
+      }
+    })
+  })
 });
 
 // export type definition of API
