@@ -1,12 +1,12 @@
 import { type PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
+import { adminProcedure, createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
 import { productCategoryRouter } from "./category";
 
 export const productRouter = createTRPCRouter({
   category: productCategoryRouter,
-  create: protectedProcedure.input(z.object({
+  create: adminProcedure.input(z.object({
     name: z.string().nonempty(),
     categoryId: z.string().uuid(),
   })).mutation(async ({ ctx, input }) => {
@@ -14,7 +14,7 @@ export const productRouter = createTRPCRouter({
       data: input,
     });
   }),
-  update: protectedProcedure.input(z.object({
+  update: adminProcedure.input(z.object({
     id: z.string().uuid(),
     name: z.string(),
     categoryId: z.string().uuid(),
@@ -35,7 +35,7 @@ export const productRouter = createTRPCRouter({
   getCount: publicProcedure.query(async ({ ctx }) => {
     return ctx.db.product.count()
   }),
-  getAll: publicProcedure.query(({ ctx }) => {
+  getAll: protectedProcedure.query(({ ctx }) => {
     return ctx.db.product.findMany({
       select: {
         id: true,
