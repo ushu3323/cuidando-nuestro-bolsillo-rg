@@ -12,8 +12,6 @@ import { type AppRouter } from "~/server/api/root";
 import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/utils/api";
 
-export const runtime = "experimental-edge";
-
 export default function NewPostPage() {
   const router = useRouter();
   const trpc = api.useContext();
