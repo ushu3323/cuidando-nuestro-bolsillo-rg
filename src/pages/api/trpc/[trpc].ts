@@ -4,7 +4,7 @@ import { env } from "~/env.mjs";
 import { appRouter } from "~/server/api/root";
 import { createTRPCContext } from "~/server/api/trpc";
 
-export const runtime = 'edge';
+export const runtime = 'experimental-edge';
 
 // export API handler
 export default createNextApiHandler({

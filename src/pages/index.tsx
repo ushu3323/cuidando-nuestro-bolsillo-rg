@@ -17,6 +17,8 @@ import { type LayoutProps } from "../components/layout/Layout";
 import { getServerAuthSession } from "../server/auth";
 import { api } from "../utils/api";
 
+export const runtime = "experimental-edge";
+
 export default function HomePage() {
   const router = useRouter();
   const [searchText, setSearchText] = useState<string>("");
