@@ -11,6 +11,7 @@ import { randomUUID } from "crypto";
 import { z } from "zod";
 import { env } from "~/env.mjs";
 import {
+  adminProcedure,
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
@@ -102,7 +103,7 @@ export const postRouter = createTRPCRouter({
 
       return { url, key, expiresIn };
     }),
-  create: protectedProcedure
+  create: adminProcedure
     .input(
       z.object({
         productId: z
@@ -144,7 +145,7 @@ export const postRouter = createTRPCRouter({
   getCount: publicProcedure.query(({ ctx }) => {
     return ctx.db.post.count()
   }),
-  getAll: publicProcedure.query(({ ctx }) => {
+  getAll: protectedProcedure.query(({ ctx }) => {
     return ctx.db.post.findMany({
       select: {
         id: true,
@@ -155,7 +156,7 @@ export const postRouter = createTRPCRouter({
       },
     });
   }),
-  getDailyBestOffers: publicProcedure.query(({ ctx }) => {
+  getDailyBestOffers: protectedProcedure.query(({ ctx }) => {
     const now = new Date();
     now.setHours(0, 0, 0, 0);
     return ctx.db.post.findMany({
@@ -195,7 +196,7 @@ export const postRouter = createTRPCRouter({
         },
       })
     }),
-  getByProduct: publicProcedure
+  getByProduct: protectedProcedure
     .input(z.object({ productId: z.string().uuid() }))
     .query(({ ctx, input }) => {
       return ctx.db.product.findUnique({

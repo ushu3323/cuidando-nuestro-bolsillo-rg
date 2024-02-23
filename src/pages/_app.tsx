@@ -28,7 +28,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <>
       <Head>
-        <title>Cuidando Nuestro Bolsillo</title>
+        <title>Precios Río Grande</title>
       </Head>
       <SessionProvider session={session}>
         <CssBaseline />

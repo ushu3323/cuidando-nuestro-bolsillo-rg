@@ -22,7 +22,7 @@ class MyDocument extends Document<DocumentHeadTagsProps> {
         <Head>
           <meta
             name="description"
-            content="Colaboramos entre todos para ahorrar en Rio Grande!"
+            content="Colaboramos entre todos para ahorrar en Río Grande!"
           />
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link

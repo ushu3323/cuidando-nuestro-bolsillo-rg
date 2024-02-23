@@ -1,7 +1,7 @@
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
 
 export const productCategoryRouter = createTRPCRouter({
-  getAll: publicProcedure.query(({ ctx }) => {
+  getAll: protectedProcedure.query(({ ctx }) => {
     return ctx.db.category.findMany();
   }),
   getCount: publicProcedure.query(({ ctx }) => {

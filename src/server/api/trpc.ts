@@ -116,3 +116,17 @@ const isAuthenticated = t.middleware(async (opts) => {
 });
 
 export const protectedProcedure = t.procedure.use(isAuthenticated);
+
+const isAdministrator = isAuthenticated.unstable_pipe(async (opts) => {
+  const { ctx } = opts;
+  const user = ctx.session.user
+  if (user.role !== "ADMIN") {
+    throw new TRPCError({ code: "FORBIDDEN" })
+  }
+
+  return opts.next({
+    ctx
+  })
+})
+
+export const adminProcedure = t.procedure.use(isAdministrator);
