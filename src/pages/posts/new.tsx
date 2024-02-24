@@ -66,11 +66,11 @@ export default function NewPostPage() {
         }
       }
       console.error(error);
+      setSnackbarMsg(
+        "Hubo un error inesperado mientras se publicaba, intentelo de nuevo mas tarde",
+      );
+      setShowSnackbar(true);
     }
-    setSnackbarMsg(
-      "Hubo un error inesperado mientras se publicaba, intentelo de nuevo mas tarde",
-    );
-    setShowSnackbar(true);
   };
 
   const handleSnackbarClose = () => setShowSnackbar(false);
