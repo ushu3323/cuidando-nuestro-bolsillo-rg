@@ -16,6 +16,8 @@ import {
   IconButton,
   Toolbar,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
@@ -27,6 +29,8 @@ import { api } from "~/utils/api";
 
 export default function PostDetailsPage() {
   const { data: session, status } = useSession({ required: true });
+  const theme = useTheme();
+  const matchesSM = useMediaQuery(theme.breakpoints.up("sm"));
   const router = useRouter();
   const formatter = new Intl.DateTimeFormat("es-AR", {
     dateStyle: "full",
@@ -68,7 +72,7 @@ export default function PostDetailsPage() {
       }
     }
     return (
-      <Card>
+      <Card elevation={matchesSM ? 2 : 0} sx={{ my: 2 }}>
         <CardHeader
           avatar={<Avatar src={data.author.image ?? undefined}></Avatar>}
           title={data.author.name}
@@ -76,9 +80,14 @@ export default function PostDetailsPage() {
         />
         <CardMedia
           component="img"
-          height="300"
+          height="auto"
           image={data.image}
           aria-hidden="true"
+          sx={{
+            objectFit: "contain",
+            maxHeight: 450,
+            bgcolor: "grey.300",
+          }}
         />
         <CardContent>
           <Box flexGrow={1}>
@@ -126,8 +135,8 @@ export default function PostDetailsPage() {
           )}
         </Toolbar>
       </AppBar>
-      <Container className="relative" maxWidth="sm">
-        <Box sx={{ my: 2 }}>
+      <Container className="relative" maxWidth="sm" sx={{ px: 0 }}>
+        <Box sx={{ my: 0 }}>
           <PostDetailsView />
         </Box>
       </Container>
