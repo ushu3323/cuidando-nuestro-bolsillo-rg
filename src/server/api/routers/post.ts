@@ -76,7 +76,7 @@ export const postRouter = createTRPCRouter({
           .string()
           .refine(
             (value) =>
-              !!["image/jpeg", "image/jpg", "image/png"].includes(value),
+              !!["image/jpeg", "image/jpg", "image/png", "image/webp"].includes(value),
             { message: "Tipo de imagen invalido" },
           ),
         length: z.number(),

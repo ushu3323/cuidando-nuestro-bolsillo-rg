@@ -1,34 +1,29 @@
-# Cuidando nuestro bolsillo Rio Grande
+# Precios Río Grande
 
-Informarse de los precios de los productos y otros insumos
-en la localidad de Rio Grande Tierra del Fuego.
-
-Una aplicación web que permite a los usuarios publicar productos que se consideren en oferta o
-economicos y asi ayudarse entre si a cuidar nuestro bolsillo.
+Consulta los precios de productos de los comercios de la región en un solo lugar, facilitando la toma de decisiones al realizar compras.
 
 ## Tecnologias
 
-Las siguientes tecnologias fueron utilizadas para poder desarrollar la aplicacion web
-
 - Next.js
-- Firebase (Authentication, Storage)
-- Postgres
+- [MUI](https://mui.com/)
+- [tRPC](https://trpc.io/)
+- Postgres (con [Prisma](https://www.prisma.io/))
 
 ## Iniciar aplicación
 
-Crear archivo `.env` con los contenidos del archivo `.env.example`. Por ejemplo en linux:
+1. Crear un archivo `.env` con los contenidos del archivo `.env.example`. Por ejemplo en UNIX:
 
 ```bash
 cat .env.example > .env
 ```
 
-Instalar dependencias
+1. Instalar dependencias
 
 ```bash
 npm ci
 ```
 
-Iniciar servidor de desarrollo
+1. Iniciar servidor de desarrollo
 
 ```bash
 npm run dev

@@ -1,5 +1,8 @@
 import { LoadingButton } from "@mui/lab";
-import { Autocomplete, InputAdornment, TextField } from "@mui/material";
+import Autocomplete from "@mui/material/Autocomplete";
+import InputAdornment from "@mui/material/InputAdornment";
+import TextField from "@mui/material/TextField";
+import Compressor from "compressorjs";
 import { useFormik, type FormikHelpers } from "formik";
 import { NumericFormat } from "react-number-format";
 import { api, type RouterOutputs } from "~/utils/api";
@@ -7,6 +10,30 @@ import ImageInput from "../inputs/ImagePicker";
 import { NewPostFormSchema, type NewPostFormFields } from "./NewPostFormSchema";
 
 export { type NewPostFormFields } from "./NewPostFormSchema";
+
+async function compressImage(imageFile: File) {
+  const result = await new Promise<File | Blob>((resolve, reject) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-call
+    return new Compressor(imageFile, {
+      quality: 0.6,
+      maxHeight: 720,
+      convertSize: 1_000_000,
+      resize: "contain",
+      mimeType: "image/webp",
+      error: (error) => reject(error),
+      success: (file) => resolve(file),
+    });
+  });
+
+  let file = result as File;
+  if (result instanceof Blob) {
+    file = new File([result], imageFile.name, {
+      type: "image/webp",
+    });
+  }
+
+  return file;
+}
 
 export function NewPostForm({
   onSubmit,
@@ -78,12 +105,18 @@ export function NewPostForm({
       <ImageInput
         id="image"
         name="image"
-        accept="image/png, image/jpg, image/jpeg"
+        accept="image/png, image/jpg, image/jpeg, image/webp"
         error={isFieldInvalid("image")}
         helpText={getFieldErrorMessages("image")}
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          void setFieldValueSecure("image", file!);
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
+        onChange={async (e) => {
+          const imageFile = e.target.files?.[0];
+          if (imageFile) {
+            const compressed = await compressImage(imageFile);
+            void setFieldValueSecure("image", compressed);
+          } else {
+            void setFieldValueSecure("image", null!);
+          }
         }}
       />
       <Autocomplete
