@@ -38,13 +38,6 @@ export default function SearchPage() {
     { enabled: query.length > 0 },
   );
 
-  console.log({
-    initialQuery: query,
-    query,
-    searchText,
-    isReady: router.isReady,
-  });
-
   useEffect(() => {
     if (router.isReady) {
       if (query) {
