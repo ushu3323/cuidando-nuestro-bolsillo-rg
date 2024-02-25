@@ -11,10 +11,9 @@ import { randomUUID } from "crypto";
 import { z } from "zod";
 import { env } from "~/env.mjs";
 import {
-  adminProcedure,
   createTRPCRouter,
   protectedProcedure,
-  publicProcedure,
+  publicProcedure
 } from "~/server/api/trpc";
 import { s3 } from "~/utils/s3";
 
@@ -103,7 +102,7 @@ export const postRouter = createTRPCRouter({
 
       return { url, key, expiresIn };
     }),
-  create: adminProcedure
+  create: protectedProcedure
     .input(
       z.object({
         productId: z
