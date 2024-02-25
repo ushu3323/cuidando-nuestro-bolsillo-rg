@@ -28,11 +28,8 @@ import SearchInputDialog from "../../components/SearchInputDialog";
 export default function SearchPage() {
   const { data: session, status } = useSession({ required: true });
   const router = useRouter();
-  const initialQuery =
-    typeof router.query.query === "undefined"
-      ? null
-      : String(router.query.query);
-  const [query, setQuery] = useState<string>(initialQuery ?? "");
+  const query =
+    typeof router.query.query === "undefined" ? "" : String(router.query.query);
   const [dialogVisible, setDialogVisible] = useState(false);
   const [searchText, setSearchText] = useState<string>(query);
 
@@ -41,14 +38,23 @@ export default function SearchPage() {
     { enabled: query.length > 0 },
   );
 
+  console.log({
+    initialQuery: query,
+    query,
+    searchText,
+    isReady: router.isReady,
+  });
+
   useEffect(() => {
-    if (!query) {
-      void router.replace("/");
-    } else {
-      setSearchText(query);
+    if (router.isReady) {
+      if (query) {
+        setSearchText(query);
+      } else {
+        void router.replace("/");
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router, query]);
+  }, [router.isReady, query]);
 
   return (
     <main>
@@ -92,14 +98,29 @@ export default function SearchPage() {
         open={dialogVisible}
         value={searchText}
         onChange={(event) => setSearchText(event.target.value)}
-        onSubmit={() => setQuery(searchText)}
+        onSubmit={() =>
+          void router.push({
+            pathname: "/search",
+            query: {
+              query: searchText,
+            },
+          })
+        }
         onClose={() => setDialogVisible(false)}
       />
-      <Container className="relative" maxWidth="sm">
-        <Box p={2}>
-          <Typography component="h2" variant="h5" fontWeight={700} gutterBottom>
-            Resultados de {`"${query}"`}
-          </Typography>
+      <Container className="relative" maxWidth="sm" sx={{ px: 0 }}>
+        <Box py={2}>
+          {router.isReady && (
+            <Typography
+              component="h2"
+              variant="h5"
+              fontWeight={700}
+              gutterBottom
+              px={2}
+            >
+              Resultados de {`"${query}"`}
+            </Typography>
+          )}
 
           {searchQuery.data?.length ? (
             <Grid container columns={2} spacing={2} px={1} py={2}>
