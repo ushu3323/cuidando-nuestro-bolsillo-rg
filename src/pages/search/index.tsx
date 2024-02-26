@@ -109,12 +109,10 @@ export default function SearchPage() {
               variant="h5"
               fontWeight={700}
               gutterBottom
-              px={2}
             >
               Resultados de {`"${query}"`}
             </Typography>
           )}
-
           {searchQuery.data?.length ? (
             <Grid container columns={2} spacing={2} px={1} py={2}>
               {searchQuery.data.map((post) => (

@@ -17,13 +17,18 @@ export const appRouter = createTRPCRouter({
   user: userRouter,
   search: protectedProcedure.input(z.object({ query: z.string() })).query(({ input, ctx }) => {
     return ctx.db.post.findMany({
+      orderBy: [
+        { price: "asc" },
+        { publishDate: "desc" },
+      ],
+      distinct: ["commerceId", "productId", "price"],
       where: {
         product: {
           name: {
             mode: "insensitive",
-            contains: input.query
+            contains: input.query,
           },
-        }
+        },
       },
       select: {
         id: true,
