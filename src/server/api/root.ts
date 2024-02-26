@@ -31,9 +31,14 @@ export const appRouter = createTRPCRouter({
         commerce: true,
         price: true,
         product: true,
-        publishDate: true
+        publishDate: true,
+        _count: {
+          select: {
+            colaborations: true,
+          }
+        }
       }
-    })
+    });
   })
 });
 

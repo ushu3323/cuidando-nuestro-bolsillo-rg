@@ -66,6 +66,7 @@ export default function HomePage() {
               post={{
                 ...post,
                 price: post.price.toNumber(),
+                colaborationCount: post._count.colaborations,
               }}
               href={`/posts/${post.id}`}
             />

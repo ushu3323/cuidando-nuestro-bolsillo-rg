@@ -123,6 +123,7 @@ export default function SearchPage() {
                     post={{
                       ...post,
                       price: post.price.toNumber(),
+                      colaborationCount: post._count.colaborations,
                     }}
                     href={`/posts/${post.id}`}
                   />

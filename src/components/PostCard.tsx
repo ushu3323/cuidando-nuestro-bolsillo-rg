@@ -1,9 +1,11 @@
+import { People } from "@mui/icons-material";
 import {
   Box,
   Card,
   CardActionArea,
   CardContent,
   CardMedia,
+  Stack,
   Typography,
 } from "@mui/material";
 import Link from "next/link";
@@ -14,6 +16,7 @@ interface Props {
     commerce: { name: string; address: string };
     image: string;
     price: number;
+    colaborationCount: number;
   };
   href?: string;
 }
@@ -34,6 +37,16 @@ export default function PostCard({ post, href }: Props) {
         />
         <CardContent className="flex grow flex-col">
           <Box flexGrow={1}>
+            <Stack direction="row">
+              <People
+                fontSize="small"
+                color="primary"
+                sx={{ marginRight: 1 }}
+              />
+              <Typography variant="body2" fontWeight="bold" color="primary">
+                {post.colaborationCount}
+              </Typography>
+            </Stack>
             <Typography
               variant="body1"
               fontWeight={400}

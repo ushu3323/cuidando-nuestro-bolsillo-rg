@@ -237,10 +237,6 @@ export const postRouter = createTRPCRouter({
   }),
   getDailyBestOffers: protectedProcedure.query(({ ctx }) => {
     const now = DateTime.now().setZone("UTC-3").startOf("day");
-    console.log("(getDailyBestOffers) now:", now.toUTC())
-    const start = now.startOf("day")
-    console.log("(getDailyBestOffers) now with hours set to zero:", start.toUTC())
-
 
     return ctx.db.post.findMany({
       orderBy: [{ price: "asc" }, { publishDate: "desc" }],
@@ -258,6 +254,11 @@ export const postRouter = createTRPCRouter({
         publishDate: true,
         image: true,
         author: true,
+        _count: {
+          select: {
+            colaborations: true,
+          }
+        }
       },
     });
   }),
