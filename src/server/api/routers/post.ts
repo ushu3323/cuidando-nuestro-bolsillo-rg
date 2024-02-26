@@ -8,6 +8,7 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { randomUUID } from "crypto";
+import { DateTime } from "luxon";
 import { z } from "zod";
 import { env } from "~/env.mjs";
 import {
@@ -102,6 +103,85 @@ export const postRouter = createTRPCRouter({
 
       return { url, key, expiresIn };
     }),
+  publish: protectedProcedure
+    .input(
+      z.object({
+        productId: z
+          .string()
+          .nonempty({ message: "El producto no debe quedar vacio" })
+          .pipe(z.string().uuid()),
+        commerceId: z
+          .string()
+          .nonempty({ message: "El comercio no debe quedar vacio" })
+          .pipe(z.string().uuid()),
+        imageKey: z.string().nonempty({ message: "La imagen es requerida" }),
+        price: z
+          .number({ invalid_type_error: "Debe ingresar el precio" })
+          .positive({ message: "Ingrese un precio valido" }),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const now = DateTime.now().setZone("UTC-3").startOf("day");
+      if (!now.isValid) {
+        throw new Error(now.invalidReason, { cause: now.invalidExplanation })
+      }
+
+      const existentPost = await ctx.db.post.findFirst({
+        where: {
+          publishDate: {
+            gte: now.toUTC().toISO(),
+          },
+          productId: input.productId,
+          commerceId: input.commerceId,
+          price: input.price,
+        }
+      });
+
+      if (existentPost) {
+        if (existentPost.authorId === ctx.session.user.id) {
+          return;
+        }
+
+        return ctx.db.colaboration.create({
+          data: {
+            post: {
+              connect: {
+                id: existentPost.id,
+              }
+            },
+            user: {
+              connect: {
+                id: ctx.session.user.id
+              }
+            }
+          }
+        })
+      }
+
+      // Creates the post
+      const imageUrl = await validateS3image(input.imageKey);
+      const post = await ctx.db.post.create({
+        data: {
+          product: {
+            connect: { id: input.productId },
+          },
+          commerce: {
+            connect: {
+              id: input.commerceId,
+            },
+          },
+          image: imageUrl,
+          price: new Prisma.Decimal(input.price),
+          author: {
+            connect: {
+              id: ctx.session.user.id,
+            },
+          },
+        },
+      });
+      return post;
+    })
+  ,
   create: protectedProcedure
     .input(
       z.object({
@@ -156,13 +236,17 @@ export const postRouter = createTRPCRouter({
     });
   }),
   getDailyBestOffers: protectedProcedure.query(({ ctx }) => {
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
+    const now = DateTime.now().setZone("UTC-3").startOf("day");
+    console.log("(getDailyBestOffers) now:", now.toUTC())
+    const start = now.startOf("day")
+    console.log("(getDailyBestOffers) now with hours set to zero:", start.toUTC())
+
+
     return ctx.db.post.findMany({
       orderBy: [{ price: "asc" }, { publishDate: "desc" }],
       where: {
         publishDate: {
-          gte: now,
+          gte: now.toUTC().toISO()!,
         },
       },
       distinct: "productId",
@@ -192,6 +276,7 @@ export const postRouter = createTRPCRouter({
           publishDate: true,
           image: true,
           author: true,
+          colaborations: true,
         },
       })
     }),

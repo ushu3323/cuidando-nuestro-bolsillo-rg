@@ -17,7 +17,7 @@ export default function NewPostPage() {
   const trpc = api.useContext();
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [snackbarMsg, setSnackbarMsg] = useState("");
-  const { mutateAsync } = api.post.create.useMutation({
+  const { mutateAsync } = api.post.publish.useMutation({
     cacheTime: 0,
   });
 
