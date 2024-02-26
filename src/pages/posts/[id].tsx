@@ -91,6 +91,17 @@ export default function PostDetailsPage() {
         />
         <CardContent>
           <Box flexGrow={1}>
+            <Typography
+              variant="body2"
+              color="primary"
+              fontWeight={"bold"}
+              gutterBottom
+            >
+              {data.colaborations.length > 0 &&
+                (data.colaborations.length > 1
+                  ? `${data.colaborations.length} personas subieron la misma oferta`
+                  : "1 subio la misma oferta")}
+            </Typography>
             <Typography variant="caption" color="text.secondary" gutterBottom>
               Categoria {data.product.category.name}
             </Typography>
@@ -98,7 +109,7 @@ export default function PostDetailsPage() {
               {data.product.name}
             </Typography>
             <Typography variant="body2" color="text.secondary" gutterBottom>
-              {data.commerce.name}
+              {data.commerce.name} - {data.commerce.address}
             </Typography>
           </Box>
           <Typography variant="h6" color="text.secondary">

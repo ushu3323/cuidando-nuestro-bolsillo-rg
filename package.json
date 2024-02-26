@@ -40,6 +40,7 @@
     "decimal.js": "^10.4.3",
     "formik": "^2.4.5",
     "html5-qrcode": "^2.3.8",
+    "luxon": "^3.4.4",
     "material-react-table": "^2.11.2",
     "next": "13.4.19",
     "next-auth": "^4.24.5",
@@ -51,6 +52,7 @@
   },
   "devDependencies": {
     "@types/eslint": "^8.44.2",
+    "@types/luxon": "^3.4.2",
     "@types/node": "^18.16.0",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",

@@ -185,13 +185,17 @@ export function NewPostForm({
         InputProps={{
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
           startAdornment: <InputAdornment position="start">$</InputAdornment>,
+          inputProps: {
+            inputMode: "numeric",
+          },
         }}
         customInput={TextField}
         value={values.price}
         onValueChange={(values) =>
           void setFieldValueSecure("price", values.floatValue ?? NaN)
         }
-        thousandSeparator
+        thousandSeparator="."
+        decimalSeparator=","
         valueIsNumericString
         allowNegative={false}
       />
