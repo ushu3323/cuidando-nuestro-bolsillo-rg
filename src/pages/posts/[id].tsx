@@ -1,6 +1,7 @@
 import {
   Add as AddIcon,
   ArrowBack as ArrowBackIcon,
+  People,
 } from "@mui/icons-material";
 import {
   AppBar,
@@ -14,6 +15,7 @@ import {
   Container,
   Fab,
   IconButton,
+  Stack,
   Toolbar,
   Typography,
   useMediaQuery,
@@ -91,17 +93,24 @@ export default function PostDetailsPage() {
         />
         <CardContent>
           <Box flexGrow={1}>
-            <Typography
-              variant="body2"
-              color="primary"
-              fontWeight={"bold"}
-              gutterBottom
-            >
-              {data.colaborations.length > 0 &&
-                (data.colaborations.length > 1
-                  ? `${data.colaborations.length} personas subieron la misma oferta`
-                  : "1 subio la misma oferta")}
-            </Typography>
+            <Stack direction="row">
+              <People
+                fontSize="small"
+                color="primary"
+                sx={{ marginRight: 1 }}
+              />
+              <Typography
+                variant="body2"
+                fontWeight="bold"
+                color="primary"
+                gutterBottom
+              >
+                {data.colaborations.length > 0 &&
+                  (data.colaborations.length > 1
+                    ? `${data.colaborations.length} personas subieron la misma oferta`
+                    : "1 persona subio la misma oferta")}
+              </Typography>
+            </Stack>
             <Typography variant="caption" color="text.secondary" gutterBottom>
               Categoria {data.product.category.name}
             </Typography>
