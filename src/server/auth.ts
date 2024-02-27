@@ -49,6 +49,13 @@ export const authOptions: NextAuthOptions = {
     signIn: "/auth/login",
   },
   callbacks: {
+    redirect: ({ url, baseUrl }) => {
+      // Allows relative callback URLs
+      if (url.startsWith("/")) return `${baseUrl}${url}`
+      // Allows callback URLs on the same origin
+      else if (new URL(url).origin === baseUrl) return url
+      return baseUrl
+    },
     session: ({ session, user }) => ({
       ...session,
       user: {
@@ -96,6 +103,7 @@ export const getServerAuthSessionProps = async (ctx: {
 
   const originUrl = ctx.req.url;
   const callbackUrlParam = originUrl && `?callbackUrl=${originUrl}`;
+
   return {
     props: { session },
     redirect: {

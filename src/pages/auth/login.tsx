@@ -1,7 +1,7 @@
-import { Box, Container, Stack, Typography } from "@mui/material";
+import { Box, Container, Snackbar, Stack, Typography } from "@mui/material";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import FacebookButton from "~/components/LoginButtons/FacebookButton";
 import GoogleButton from "~/components/LoginButtons/GoogleButton";
 import LoadingPage from "../../components/LoadingPage";
@@ -9,6 +9,11 @@ import LoadingPage from "../../components/LoadingPage";
 export default function LoginPage() {
   const { status } = useSession();
   const router = useRouter();
+  const [callbackUrl, setCallbackUrl] = useState("/");
+  const [snackbarOpts, setSnackbarOpts] = useState({
+    message: "",
+    show: false,
+  });
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -18,6 +23,18 @@ export default function LoginPage() {
     }
   }, [status, router]);
 
+  useEffect(() => {
+    if (router.isReady) {
+      if (router.query.callbackUrl) {
+        setSnackbarOpts({
+          message: "Inicie sesion para continuar",
+          show: true,
+        });
+      }
+      setCallbackUrl(router.query.callbackUrl as string);
+    }
+  }, [router.isReady]);
+
   if (status === "loading" || status === "authenticated") {
     return (
       <LoadingPage>{status === "authenticated" && "Volviendo ;)"}</LoadingPage>
@@ -25,7 +42,7 @@ export default function LoginPage() {
   }
 
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="sm" sx={{ mb: 4 }}>
       <Stack alignItems="center">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img className="h-56 w-56 pe-8 text-center" src="/favicon.svg" alt="" />
@@ -54,9 +71,17 @@ export default function LoginPage() {
         marginTop={3}
         justifyContent="center"
       >
-        <FacebookButton />
-        <GoogleButton />
+        <FacebookButton callbackUrl={callbackUrl} />
+        <GoogleButton callbackUrl={callbackUrl} />
       </Stack>
+      <Snackbar
+        message={snackbarOpts.message}
+        open={snackbarOpts.show}
+        autoHideDuration={5000}
+        anchorOrigin={{ horizontal: "center", vertical: "top" }}
+        sx={{ mt: 8 }}
+        onClose={() => setSnackbarOpts((opts) => ({ ...opts, show: false }))}
+      />
     </Container>
   );
 }
