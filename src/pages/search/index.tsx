@@ -8,6 +8,7 @@ import {
   Box,
   CircularProgress,
   Container,
+  Divider,
   Fab,
   Grid,
   IconButton,
@@ -17,12 +18,12 @@ import {
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { NextLinkComposed } from "~/components/NextLinkComposed";
 import PostCard from "~/components/PostCard";
 import AvatarMenu from "~/components/layout/Header/AvatarMenu";
 import { type LayoutProps } from "~/components/layout/Layout";
-import { api } from "~/utils/api";
+import { api, type RouterOutputs } from "~/utils/api";
 import SearchInputDialog from "../../components/SearchInputDialog";
 
 export default function SearchPage() {
@@ -38,6 +39,23 @@ export default function SearchPage() {
     { enabled: query.length > 0 },
   );
 
+  const { todayResults, oldResults } = useMemo(() => {
+    const t = new Date();
+    t.setHours(0, 0, 0, 0);
+    const todayResults: RouterOutputs["search"] = [];
+    const oldResults: RouterOutputs["search"] = [];
+    if (searchQuery.data) {
+      for (const post of searchQuery.data) {
+        if (post.publishDate.getTime() > t.getTime()) {
+          todayResults.push(post);
+        } else {
+          oldResults.push(post);
+        }
+      }
+    }
+    return { todayResults, oldResults };
+  }, [searchQuery.data]);
+
   useEffect(() => {
     if (router.isReady) {
       if (query) {
@@ -48,6 +66,40 @@ export default function SearchPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady, query]);
+
+  const TodayResultsView = () => (
+    <Grid container columns={2} spacing={2} px={1} py={2} mb={4}>
+      {todayResults.map((post) => (
+        <Grid key={post.id} item xs={1}>
+          <PostCard
+            post={{
+              ...post,
+              price: post.price.toNumber(),
+              colaborationCount: post._count.colaborations,
+            }}
+            href={`/posts/${post.id}`}
+          />
+        </Grid>
+      ))}
+    </Grid>
+  );
+
+  const OldResultsView = () => (
+    <Grid container columns={2} spacing={2} px={1} py={2}>
+      {oldResults.map((post) => (
+        <Grid key={post.id} item xs={1}>
+          <PostCard
+            post={{
+              ...post,
+              price: post.price.toNumber(),
+              colaborationCount: post._count.colaborations,
+            }}
+            href={`/posts/${post.id}`}
+          />
+        </Grid>
+      ))}
+    </Grid>
+  );
 
   return (
     <main>
@@ -115,20 +167,17 @@ export default function SearchPage() {
             </Typography>
           )}
           {searchQuery.data?.length ? (
-            <Grid container columns={2} spacing={2} px={1} py={2}>
-              {searchQuery.data.map((post) => (
-                <Grid key={post.id} item xs={1}>
-                  <PostCard
-                    post={{
-                      ...post,
-                      price: post.price.toNumber(),
-                      colaborationCount: post._count.colaborations,
-                    }}
-                    href={`/posts/${post.id}`}
-                  />
-                </Grid>
-              ))}
-            </Grid>
+            <Box>
+              <Typography variant="h5" align="center" sx={{ my: 4 }}>
+                Resultados de Hoy
+              </Typography>
+              <TodayResultsView />
+              <Divider variant="middle" sx={{ my: 5 }} />
+              <Typography variant="h5" align="center" sx={{ my: 4 }}>
+                Antiguos
+              </Typography>
+              <OldResultsView />
+            </Box>
           ) : (
             <Box
               minHeight={200}
