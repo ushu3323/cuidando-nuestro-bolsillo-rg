@@ -108,6 +108,7 @@ export default function SearchPage() {
               component="h2"
               variant="h5"
               fontWeight={700}
+              px={2}
               gutterBottom
             >
               Resultados de {`"${query}"`}
