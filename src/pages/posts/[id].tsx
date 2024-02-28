@@ -1,19 +1,20 @@
 import {
-  Add as AddIcon,
   ArrowBack as ArrowBackIcon,
   People,
+  PlaylistAdd,
+  PlaylistRemove,
 } from "@mui/icons-material";
 import {
   AppBar,
   Avatar,
   Box,
+  Button,
   Card,
   CardContent,
   CardHeader,
   CardMedia,
   CircularProgress,
   Container,
-  Fab,
   IconButton,
   Stack,
   Toolbar,
@@ -24,16 +25,23 @@ import {
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import LoadingPage from "~/components/LoadingPage";
-import { NextLinkComposed } from "~/components/NextLinkComposed";
 import AvatarMenu from "~/components/layout/Header/AvatarMenu";
 import { type LayoutProps } from "~/components/layout/Layout";
+import useShoplist from "~/hooks/useShoplist";
 import { api } from "~/utils/api";
 
 export default function PostDetailsPage() {
+  const shoplist = useShoplist();
   const { data: session, status } = useSession({ required: true });
   const theme = useTheme();
   const matchesSM = useMediaQuery(theme.breakpoints.up("sm"));
   const router = useRouter();
+
+  const isInShoplist =
+    shoplist.data.findIndex(
+      (item) => item.postId === (router.query.id as string),
+    ) !== -1;
+
   const formatter = new Intl.DateTimeFormat("es-AR", {
     dateStyle: "full",
     timeStyle: "short",
@@ -92,7 +100,7 @@ export default function PostDetailsPage() {
           }}
         />
         <CardContent>
-          <Box flexGrow={1}>
+          <Box flexGrow={1} mb={2}>
             {data.colaborations.length > 0 && (
               <Stack direction="row">
                 <People
@@ -121,13 +129,41 @@ export default function PostDetailsPage() {
             <Typography variant="body2" color="text.secondary" gutterBottom>
               {data.commerce.name} - {data.commerce.address}
             </Typography>
+            <Typography variant="h6" color="text.secondary" gutterBottom>
+              {data.price.toNumber().toLocaleString("es-AR", {
+                style: "currency",
+                currency: "ARS",
+              })}
+            </Typography>
           </Box>
-          <Typography variant="h6" color="text.secondary">
-            {data.price.toNumber().toLocaleString("es-AR", {
-              style: "currency",
-              currency: "ARS",
-            })}
-          </Typography>
+          <Button
+            color={isInShoplist ? "error" : "primary"}
+            variant={isInShoplist ? "outlined" : "contained"}
+            startIcon={isInShoplist ? <PlaylistRemove /> : <PlaylistAdd />}
+            onClick={() => {
+              if (isInShoplist) {
+                shoplist.remove(router.query.id as string);
+              } else {
+                shoplist.add({
+                  postId: data.id,
+                  product: {
+                    name: data.product.name,
+                    category: data.product.category,
+                  },
+                  commerce: {
+                    name: data.commerce.name,
+                    address: data.commerce.address,
+                  },
+                  price: data.price.toNumber(),
+                });
+              }
+            }}
+            fullWidth
+          >
+            {isInShoplist
+              ? "Quitar de lista de compras"
+              : "Añadir a lista de compras"}
+          </Button>
         </CardContent>
       </Card>
     );
@@ -171,19 +207,4 @@ PostDetailsPage.layoutProps = {
     disableGutters: true,
     maxWidth: false,
   },
-  fab: () => (
-    <Fab
-      color="secondary"
-      variant="extended"
-      sx={{ position: "fixed", bottom: 28, right: 15 }}
-      component={NextLinkComposed}
-      to={{
-        pathname: "/posts/new",
-      }}
-      prefetch
-    >
-      <AddIcon sx={{ mr: 1 }} />
-      <span>Publicar</span>
-    </Fab>
-  ),
 } satisfies LayoutProps;

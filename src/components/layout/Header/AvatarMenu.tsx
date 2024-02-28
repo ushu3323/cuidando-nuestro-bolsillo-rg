@@ -1,5 +1,9 @@
 "use client";
-import { AdminPanelSettings, Logout as LogoutIcon } from "@mui/icons-material";
+import {
+  AdminPanelSettings,
+  List,
+  Logout as LogoutIcon,
+} from "@mui/icons-material";
 import {
   Avatar,
   Divider,
@@ -12,7 +16,7 @@ import {
 } from "@mui/material";
 import { type Session } from "next-auth";
 import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/router";
 import { useMemo, useRef, useState, type ReactNode } from "react";
 
 type MenuOption = {
@@ -27,21 +31,31 @@ export default function AvatarMenu({ user }: { user: Session["user"] }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const options = useMemo<MenuOption[]>(() => {
-    const options: MenuOption[] = [
+    function iif<T>(condition: boolean, value: T) {
+      return condition ? [value] : [];
+    }
+
+    return [
+      {
+        label: "Mi Lista de compras",
+        icon: <List />,
+        command: () => {
+          void router.push("/shoplist").finally(() => setMenuOpen(false));
+        },
+      },
+      ...iif<MenuOption>(user.role === "ADMIN", {
+        label: "Administración",
+        icon: <AdminPanelSettings />,
+        command: () => {
+          void router.push("/admin").finally(() => setMenuOpen(false));
+        },
+      }),
       {
         label: "Cerrar sesion",
         icon: <LogoutIcon />,
         command: () => void signOut({ callbackUrl: "/auth/login" }),
       },
     ];
-    if (user.role === "ADMIN") {
-      options.push({
-        label: "Administración",
-        icon: <AdminPanelSettings />,
-        command: () => router.push("/admin"),
-      });
-    }
-    return options;
   }, [user]);
 
   const handleMenu = () => {

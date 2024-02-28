@@ -3,6 +3,7 @@ import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
 import Head from "next/head";
+import ShoplistProvider from "~/providers/shoplistProvider";
 import { api } from "~/utils/api";
 import Layout, { type LayoutProps } from "../components/layout/Layout";
 import MUIProvider from "../providers/MUI/MUIProvider";
@@ -34,9 +35,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <CssBaseline />
         <MUIProvider {...pageProps}>
           {inputGlobalStyles}
-          <Layout {...layoutProps}>
-            <Component {...pageProps} />
-          </Layout>
+          <ShoplistProvider>
+            <Layout {...layoutProps}>
+              <Component {...pageProps} />
+            </Layout>
+          </ShoplistProvider>
         </MUIProvider>
       </SessionProvider>
     </>
