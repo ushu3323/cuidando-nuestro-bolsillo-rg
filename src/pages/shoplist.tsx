@@ -42,6 +42,10 @@ export default function ShoplistPage() {
     return obj;
   }, [shoplist.data]);
 
+  const total = useMemo<number>(() => {
+    return shoplist.data.reduce((sum, item) => sum + item.price, 0);
+  }, [shoplist.data]);
+
   return (
     <main className="flex h-screen min-h-0 flex-col">
       <AppBar position="sticky">
@@ -86,7 +90,9 @@ export default function ShoplistPage() {
           {Object.entries(categories).map(([category, items]) => (
             <li key={category}>
               <ul>
-                <ListSubheader sx={{ backgroundColor: blue[100], fontWeight: "bold" }}>
+                <ListSubheader
+                  sx={{ backgroundColor: blue[100], fontWeight: "bold" }}
+                >
                   {category}
                 </ListSubheader>
                 {items.map((item) => (
@@ -105,6 +111,9 @@ export default function ShoplistPage() {
                     >
                       <ListItemButton>
                         <ListItemText
+                          sx={{
+                            textDecoration: item.done ? "line-through" : "none",
+                          }}
                           primary={item.product.name}
                           secondary={`${item.commerce.name} ${item.commerce.address}`}
                         />
@@ -125,6 +134,17 @@ export default function ShoplistPage() {
           ))}
         </List>
       </Container>
+      <AppBar color="transparent" position="sticky">
+        <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+          <Typography variant="h6">Total:</Typography>
+          <Typography variant="h6">
+            {total.toLocaleString("es-AR", {
+              style: "currency",
+              currency: "ARS",
+            })}
+          </Typography>
+        </Toolbar>
+      </AppBar>
     </main>
   );
 }

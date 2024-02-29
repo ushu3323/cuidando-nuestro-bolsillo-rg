@@ -18,13 +18,32 @@ import {
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import { NextLinkComposed } from "~/components/NextLinkComposed";
-import PostCard from "~/components/PostCard";
 import AvatarMenu from "~/components/layout/Header/AvatarMenu";
 import { type LayoutProps } from "~/components/layout/Layout";
 import { api, type RouterOutputs } from "~/utils/api";
+import PostCard from "../../components/PostCard";
 import SearchInputDialog from "../../components/SearchInputDialog";
+
+const rtf = new Intl.RelativeTimeFormat("es", {
+  style: "long",
+  numeric: "auto",
+});
+
+function formatTime(date: Date): string {
+  const now = new Date();
+  const elapsed = date.getTime() - now.getTime();
+  const daysElapsed = Math.ceil(elapsed / (24 * 60 * 60 * 1000));
+  console.log(daysElapsed)
+  if (daysElapsed > -3) {
+    return rtf.format(daysElapsed, "days");
+  } else if (daysElapsed > -6){
+    return date.toLocaleDateString(undefined, {weekday: "long", day: "2-digit"})
+  } else {
+    return date.toLocaleDateString();
+  }
+}
 
 export default function SearchPage() {
   const { data: session, status } = useSession({ required: true });
@@ -39,21 +58,36 @@ export default function SearchPage() {
     { enabled: query.length > 0 },
   );
 
-  const { todayResults, oldResults } = useMemo(() => {
-    const t = new Date();
-    t.setHours(0, 0, 0, 0);
-    const todayResults: RouterOutputs["search"] = [];
-    const oldResults: RouterOutputs["search"] = [];
-    if (searchQuery.data) {
-      for (const post of searchQuery.data) {
-        if (post.publishDate.getTime() > t.getTime()) {
-          todayResults.push(post);
+  type ResultGroup = {
+    date: Date;
+    results: RouterOutputs["search"];
+  };
+
+  const resultGroups = useMemo<ResultGroup[]>(() => {
+    const groups: ResultGroup[] = [];
+    const results = searchQuery.data;
+    if (results) {
+      for (const result of results) {
+        const dateWithoutTime = new Date(
+          result.publishDate.getFullYear(),
+          result.publishDate.getMonth(),
+          result.publishDate.getDate(),
+        );
+        console.log({dateWithoutTime})
+        const group = groups.find(
+          (group) => group.date.getTime() === dateWithoutTime.getTime(),
+        );
+        if (group) {
+          group.results.push(result);
         } else {
-          oldResults.push(post);
+          groups.push({ date: dateWithoutTime, results: [result] });
         }
       }
     }
-    return { todayResults, oldResults };
+
+    return groups.sort((a, b) =>
+      a.date.getTime() < b.date.getTime() ? 1 : -1,
+    );
   }, [searchQuery.data]);
 
   useEffect(() => {
@@ -66,40 +100,6 @@ export default function SearchPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady, query]);
-
-  const TodayResultsView = () => (
-    <Grid container columns={2} spacing={2} px={1} py={2} mb={4}>
-      {todayResults.map((post) => (
-        <Grid key={post.id} item xs={1}>
-          <PostCard
-            post={{
-              ...post,
-              price: post.price.toNumber(),
-              colaborationCount: post._count.colaborations,
-            }}
-            href={`/posts/${post.id}`}
-          />
-        </Grid>
-      ))}
-    </Grid>
-  );
-
-  const OldResultsView = () => (
-    <Grid container columns={2} spacing={2} px={1} py={2}>
-      {oldResults.map((post) => (
-        <Grid key={post.id} item xs={1}>
-          <PostCard
-            post={{
-              ...post,
-              price: post.price.toNumber(),
-              colaborationCount: post._count.colaborations,
-            }}
-            href={`/posts/${post.id}`}
-          />
-        </Grid>
-      ))}
-    </Grid>
-  );
 
   return (
     <main>
@@ -155,29 +155,39 @@ export default function SearchPage() {
       />
       <Container className="relative" maxWidth="sm" sx={{ px: 0 }}>
         <Box py={2}>
-          {router.isReady && (
-            <Typography
-              component="h2"
-              variant="h5"
-              fontWeight={700}
-              px={2}
-              gutterBottom
-            >
-              Resultados de {`"${query}"`}
-            </Typography>
-          )}
-          {searchQuery.data?.length ? (
-            <Box>
-              <Typography variant="h5" align="center" sx={{ my: 4 }}>
-                Resultados de Hoy
-              </Typography>
-              <TodayResultsView />
-              <Divider variant="middle" sx={{ my: 5 }} />
-              <Typography variant="h5" align="center" sx={{ my: 4 }}>
-                Antiguos
-              </Typography>
-              <OldResultsView />
-            </Box>
+          {resultGroups.length ? (
+            <Grid container columns={2} spacing={2} px={1} py={2} mt={6} mb={4}>
+              {resultGroups.map((group, index) => (
+                <Fragment key={group.date.getTime()}>
+                  <Grid item xs={2}>
+                    <Typography
+                      variant="h6"
+                      align="center"
+                      textTransform="capitalize"
+                    >
+                      {formatTime(group.date)}
+                    </Typography>
+                  </Grid>
+                  {group.results.map((post) => (
+                    <Grid key={post.id} item xs={1}>
+                      <PostCard
+                        post={{
+                          ...post,
+                          price: post.price.toNumber(),
+                          colaborationCount: post._count.colaborations,
+                        }}
+                        href={`/posts/${post.id}`}
+                      />
+                    </Grid>
+                  ))}
+                  {index < resultGroups.length-1 && (
+                    <Grid item xs={2}>
+                      <Divider variant="middle" />
+                    </Grid>
+                  )}
+                </Fragment>
+              ))}
+            </Grid>
           ) : (
             <Box
               minHeight={200}
@@ -191,7 +201,11 @@ export default function SearchPage() {
                 <CircularProgress />
               ) : (
                 <>
-                  <Typography textAlign="center" variant="subtitle1">
+                  <Typography
+                    textAlign="center"
+                    variant="h6"
+                    fontWeight="normal"
+                  >
                     Sin resultados
                   </Typography>
                 </>
