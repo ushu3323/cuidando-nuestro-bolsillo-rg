@@ -14,6 +14,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
+import { blue } from "@mui/material/colors";
 import { type GetServerSideProps } from "next";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -85,7 +86,7 @@ export default function ShoplistPage() {
           {Object.entries(categories).map(([category, items]) => (
             <li key={category}>
               <ul>
-                <ListSubheader sx={{ backgroundColor: "grey.100" }}>
+                <ListSubheader sx={{ backgroundColor: blue[100], fontWeight: "bold" }}>
                   {category}
                 </ListSubheader>
                 {items.map((item) => (
