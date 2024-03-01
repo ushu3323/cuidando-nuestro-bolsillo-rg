@@ -17,7 +17,7 @@ import {
 import { blue } from "@mui/material/colors";
 import { type GetServerSideProps } from "next";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
+import { useRouter } from "next/router";
 import { Fragment, useMemo } from "react";
 import AvatarMenu from "~/components/layout/Header/AvatarMenu";
 import { type LayoutProps } from "~/components/layout/Layout";
@@ -28,6 +28,7 @@ import { getServerAuthSessionProps } from "~/server/auth";
 export default function ShoplistPage() {
   const { data: session, status } = useSession({ required: true });
   const shoplist = useShoplist();
+  const router = useRouter();
 
   const categories = useMemo<Record<string, ShoplistItem[]>>(() => {
     const obj: Record<string, ShoplistItem[]> = {};
@@ -53,8 +54,7 @@ export default function ShoplistPage() {
           <IconButton
             edge="start"
             color="inherit"
-            LinkComponent={Link}
-            href="/"
+            onClick={() => void router.back()}
           >
             <ArrowBackIcon />
           </IconButton>
@@ -109,7 +109,8 @@ export default function ShoplistPage() {
                       }
                       disablePadding
                     >
-                      <ListItemButton>
+                      <ListItemButton
+                       onClick={() => void router.push({pathname: "/posts/[id]", query: {id: item.postId}})}>
                         <ListItemText
                           sx={{
                             textDecoration: item.done ? "line-through" : "none",
