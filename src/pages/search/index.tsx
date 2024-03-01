@@ -15,6 +15,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
+import { blue } from "@mui/material/colors";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -35,13 +36,16 @@ function formatTime(date: Date): string {
   const now = new Date();
   const elapsed = date.getTime() - now.getTime();
   const daysElapsed = Math.ceil(elapsed / (24 * 60 * 60 * 1000));
-  console.log(daysElapsed)
-  if (daysElapsed > -3) {
-    return rtf.format(daysElapsed, "days");
-  } else if (daysElapsed > -6){
-    return date.toLocaleDateString(undefined, {weekday: "long", day: "2-digit"})
+  if (daysElapsed > -2) {
+    return `${date.toLocaleDateString(undefined, {
+      weekday: "long",
+      day: "2-digit",
+    })} (${rtf.format(daysElapsed, "days")})`;
   } else {
-    return date.toLocaleDateString();
+    return date.toLocaleDateString(undefined, {
+      weekday: "long",
+      day: "2-digit",
+    });
   }
 }
 
@@ -63,9 +67,21 @@ export default function SearchPage() {
     results: RouterOutputs["search"];
   };
 
-  const resultGroups = useMemo<ResultGroup[]>(() => {
-    const groups: ResultGroup[] = [];
+  const resultGroups = useMemo<{
+    today: ResultGroup | null;
+    old: ResultGroup[];
+  }>(() => {
+    const now = new Date();
+    const nowWithoutTime = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+    );
+
+    let todayGroup: ResultGroup | null = null;
+    const restGroups: ResultGroup[] = [];
     const results = searchQuery.data;
+
     if (results) {
       for (const result of results) {
         const dateWithoutTime = new Date(
@@ -73,21 +89,38 @@ export default function SearchPage() {
           result.publishDate.getMonth(),
           result.publishDate.getDate(),
         );
-        console.log({dateWithoutTime})
-        const group = groups.find(
+
+        const isTodayResult =
+          dateWithoutTime.getTime() === nowWithoutTime.getTime();
+        if (isTodayResult) {
+          if (!todayGroup) {
+            todayGroup = {
+              date: dateWithoutTime,
+              results: [result],
+            };
+          } else {
+            todayGroup.results.push(result);
+          }
+          continue;
+        }
+
+        const group = restGroups.find(
           (group) => group.date.getTime() === dateWithoutTime.getTime(),
         );
         if (group) {
           group.results.push(result);
         } else {
-          groups.push({ date: dateWithoutTime, results: [result] });
+          restGroups.push({ date: dateWithoutTime, results: [result] });
         }
       }
     }
 
-    return groups.sort((a, b) =>
-      a.date.getTime() < b.date.getTime() ? 1 : -1,
-    );
+    return {
+      today: todayGroup,
+      old: restGroups.sort((a, b) =>
+        a.date.getTime() < b.date.getTime() ? 1 : -1,
+      ),
+    };
   }, [searchQuery.data]);
 
   useEffect(() => {
@@ -101,44 +134,43 @@ export default function SearchPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady, query]);
 
+  const SearchAppBar = () => (
+    <AppBar position="sticky">
+      <Toolbar>
+        <IconButton edge="start" color="inherit" LinkComponent={Link} href="/">
+          <ArrowBackIcon />
+        </IconButton>
+        <Typography
+          component="div"
+          variant="h6"
+          fontWeight={500}
+          sx={{ flex: 1, ml: 2 }}
+        >
+          {query}
+        </Typography>
+        <IconButton
+          edge="start"
+          color="inherit"
+          onClick={() => setDialogVisible(true)}
+        >
+          <SearchIcon />
+        </IconButton>
+        {status === "loading" ? (
+          <CircularProgress></CircularProgress>
+        ) : (
+          session && (
+            <div className="flex items-center gap-5">
+              <AvatarMenu user={session.user} />
+            </div>
+          )
+        )}
+      </Toolbar>
+    </AppBar>
+  );
+
   return (
     <main>
-      <AppBar position="sticky">
-        <Toolbar>
-          <IconButton
-            edge="start"
-            color="inherit"
-            LinkComponent={Link}
-            href="/"
-          >
-            <ArrowBackIcon />
-          </IconButton>
-          <Typography
-            component="div"
-            variant="h6"
-            fontWeight={500}
-            sx={{ flex: 1, ml: 2 }}
-          >
-            {query}
-          </Typography>
-          <IconButton
-            edge="start"
-            color="inherit"
-            onClick={() => setDialogVisible(true)}
-          >
-            <SearchIcon />
-          </IconButton>
-          {status === "loading" ? (
-            <CircularProgress></CircularProgress>
-          ) : (
-            session && (
-              <div className="flex items-center gap-5">
-                <AvatarMenu user={session.user} />
-              </div>
-            )
-          )}
-        </Toolbar>
-      </AppBar>
+      <SearchAppBar />
       <SearchInputDialog
         open={dialogVisible}
         value={searchText}
@@ -153,41 +185,82 @@ export default function SearchPage() {
         }
         onClose={() => setDialogVisible(false)}
       />
-      <Container className="relative" maxWidth="sm" sx={{ px: 0 }}>
-        <Box py={2}>
-          {resultGroups.length ? (
-            <Grid container columns={2} spacing={2} px={1} py={2} mt={6} mb={4}>
-              {resultGroups.map((group, index) => (
-                <Fragment key={group.date.getTime()}>
-                  <Grid item xs={2}>
-                    <Typography
-                      variant="h6"
-                      align="center"
-                      textTransform="capitalize"
-                    >
-                      {formatTime(group.date)}
-                    </Typography>
-                  </Grid>
-                  {group.results.map((post) => (
-                    <Grid key={post.id} item xs={1}>
-                      <PostCard
-                        post={{
-                          ...post,
-                          price: post.price.toNumber(),
-                          colaborationCount: post._count.colaborations,
-                        }}
-                        href={`/posts/${post.id}`}
-                      />
+      <Container maxWidth="sm" disableGutters>
+        <Box pt={2}>
+          {resultGroups.today ?? resultGroups.old.length ? (
+            <>
+              {resultGroups.today && (
+                <Grid container columns={2} spacing={2} px={1} py={2} mb={4}>
+                  {/* Today posts */}
+                  <>
+                    <Grid item xs={2} mt={2} mb={2}>
+                      <Divider
+                        textAlign="center"
+                        sx={{ fontWeight: "bold", textTransform: "capitalize", bgcolor: blue[100], mx: -1 }}
+                      >
+                        {formatTime(resultGroups.today.date)}
+                      </Divider>
                     </Grid>
-                  ))}
-                  {index < resultGroups.length-1 && (
-                    <Grid item xs={2}>
-                      <Divider variant="middle" />
+                    {resultGroups.today.results.map((post) => (
+                      <Grid key={post.id} item xs={1}>
+                        <PostCard
+                          post={{
+                            ...post,
+                            price: post.price.toNumber(),
+                            colaborationCount: post._count.colaborations,
+                          }}
+                          href={`/posts/${post.id}`}
+                        />
+                      </Grid>
+                    ))}
+                  </>
+                </Grid>
+              )}
+              <Grid container columns={2} spacing={2} px={1} pb={8}>
+                {/* Old posts */}
+                {resultGroups.old.length && (
+                  <>
+                    <Grid item xs={2}  p={0}>
+                      <Typography
+                        variant="h6"
+                        textAlign="center"
+                      >
+                        Publicaciones Antiguas
+                      </Typography>
                     </Grid>
-                  )}
-                </Fragment>
-              ))}
-            </Grid>
+                    {resultGroups.old.map((group) => (
+                      <Fragment key={group.date.getTime()}>
+                        <Grid item xs={2} mt={2} mb={2}>
+                          <Divider
+                            textAlign="center"
+                            sx={{
+                              fontWeight: "bold",
+                              textTransform: "capitalize",
+                              bgcolor: blue[100],
+                              mx: -1,
+                            }}
+                          >
+                            {formatTime(group.date)}
+                          </Divider>
+                        </Grid>
+                        {group.results.map((post) => (
+                          <Grid key={post.id} item xs={1}>
+                            <PostCard
+                              post={{
+                                ...post,
+                                price: post.price.toNumber(),
+                                colaborationCount: post._count.colaborations,
+                              }}
+                              href={`/posts/${post.id}`}
+                            />
+                          </Grid>
+                        ))}
+                      </Fragment>
+                    ))}
+                  </>
+                )}
+              </Grid>
+            </>
           ) : (
             <Box
               minHeight={200}
