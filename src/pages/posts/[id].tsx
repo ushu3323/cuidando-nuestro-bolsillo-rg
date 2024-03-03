@@ -29,6 +29,7 @@ import AvatarMenu from "~/components/layout/Header/AvatarMenu";
 import { type LayoutProps } from "~/components/layout/Layout";
 import useShoplist from "~/hooks/useShoplist";
 import { api } from "~/utils/api";
+import ProtectPage from "../../components/Protected";
 
 export default function PostDetailsPage() {
   const shoplist = useShoplist();
@@ -170,34 +171,36 @@ export default function PostDetailsPage() {
   };
 
   return (
-    <main>
-      <AppBar position="sticky">
-        <Toolbar>
-          <IconButton
-            edge="start"
-            color="inherit"
-            onClick={() => router.back()}
-          >
-            <ArrowBackIcon />
-          </IconButton>
-          <div className="flex-1" />
-          {status === "loading" ? (
-            <CircularProgress />
-          ) : (
-            session && (
-              <div className="flex items-center gap-5">
-                <AvatarMenu user={session.user} />
-              </div>
-            )
-          )}
-        </Toolbar>
-      </AppBar>
-      <Container className="relative" maxWidth="sm" sx={{ px: 0 }}>
-        <Box sx={{ my: 0 }}>
-          <PostDetailsView />
-        </Box>
-      </Container>
-    </main>
+    <ProtectPage>
+      <main>
+        <AppBar position="sticky">
+          <Toolbar>
+            <IconButton
+              edge="start"
+              color="inherit"
+              onClick={() => router.back()}
+            >
+              <ArrowBackIcon />
+            </IconButton>
+            <div className="flex-1" />
+            {status === "loading" ? (
+              <CircularProgress />
+            ) : (
+              session && (
+                <div className="flex items-center gap-5">
+                  <AvatarMenu user={session.user} />
+                </div>
+              )
+            )}
+          </Toolbar>
+        </AppBar>
+        <Container className="relative" maxWidth="sm" sx={{ px: 0 }}>
+          <Box sx={{ my: 0 }}>
+            <PostDetailsView />
+          </Box>
+        </Container>
+      </main>
+    </ProtectPage>
   );
 }
 

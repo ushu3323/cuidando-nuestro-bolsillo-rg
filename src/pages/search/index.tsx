@@ -25,6 +25,7 @@ import AvatarMenu from "~/components/layout/Header/AvatarMenu";
 import { type LayoutProps } from "~/components/layout/Layout";
 import { api, type RouterOutputs } from "~/utils/api";
 import PostCard from "../../components/PostCard";
+import ProtectPage from "../../components/Protected";
 import SearchInputDialog from "../../components/SearchInputDialog";
 
 const rtf = new Intl.RelativeTimeFormat("es", {
@@ -169,125 +170,129 @@ export default function SearchPage() {
   );
 
   return (
-    <main>
-      <SearchAppBar />
-      <SearchInputDialog
-        open={dialogVisible}
-        value={searchText}
-        onChange={(event) => setSearchText(event.target.value)}
-        onSubmit={() =>
-          void router.push({
-            pathname: "/search",
-            query: {
-              query: searchText,
-            },
-          })
-        }
-        onClose={() => setDialogVisible(false)}
-      />
-      <Container maxWidth="sm" disableGutters>
-        <Box pt={2}>
-          {resultGroups.today ?? resultGroups.old.length ? (
-            <>
-              {resultGroups.today && (
-                <Grid container columns={2} spacing={2} px={1} py={2} mb={4}>
-                  {/* Today posts */}
-                  <>
-                    <Grid item xs={2} mt={2} mb={2}>
-                      <Divider
-                        textAlign="center"
-                        sx={{ fontWeight: "bold", textTransform: "capitalize", bgcolor: blue[100], mx: -1 }}
-                      >
-                        {formatTime(resultGroups.today.date)}
-                      </Divider>
-                    </Grid>
-                    {resultGroups.today.results.map((post) => (
-                      <Grid key={post.id} item xs={1}>
-                        <PostCard
-                          post={{
-                            ...post,
-                            price: post.price.toNumber(),
-                            colaborationCount: post._count.colaborations,
+    <ProtectPage>
+      <main>
+        <SearchAppBar />
+        <SearchInputDialog
+          open={dialogVisible}
+          value={searchText}
+          onChange={(event) => setSearchText(event.target.value)}
+          onSubmit={() =>
+            void router.push({
+              pathname: "/search",
+              query: {
+                query: searchText,
+              },
+            })
+          }
+          onClose={() => setDialogVisible(false)}
+        />
+        <Container maxWidth="sm" disableGutters>
+          <Box pt={2}>
+            {resultGroups.today ?? resultGroups.old.length ? (
+              <>
+                {resultGroups.today && (
+                  <Grid container columns={2} spacing={2} px={1} py={2} mb={4}>
+                    {/* Today posts */}
+                    <>
+                      <Grid item xs={2} mt={2} mb={2}>
+                        <Divider
+                          textAlign="center"
+                          sx={{
+                            fontWeight: "bold",
+                            textTransform: "capitalize",
+                            bgcolor: blue[100],
+                            mx: -1,
                           }}
-                          href={`/posts/${post.id}`}
-                        />
+                        >
+                          {formatTime(resultGroups.today.date)}
+                        </Divider>
                       </Grid>
-                    ))}
-                  </>
-                </Grid>
-              )}
-              <Grid container columns={2} spacing={2} px={1} pb={8}>
-                {/* Old posts */}
-                {resultGroups.old.length && (
-                  <>
-                    <Grid item xs={2}  p={0}>
-                      <Typography
-                        variant="h6"
-                        textAlign="center"
-                      >
-                        Publicaciones Antiguas
-                      </Typography>
-                    </Grid>
-                    {resultGroups.old.map((group) => (
-                      <Fragment key={group.date.getTime()}>
-                        <Grid item xs={2} mt={2} mb={2}>
-                          <Divider
-                            textAlign="center"
-                            sx={{
-                              fontWeight: "bold",
-                              textTransform: "capitalize",
-                              bgcolor: blue[100],
-                              mx: -1,
+                      {resultGroups.today.results.map((post) => (
+                        <Grid key={post.id} item xs={1}>
+                          <PostCard
+                            post={{
+                              ...post,
+                              price: post.price.toNumber(),
+                              colaborationCount: post._count.colaborations,
                             }}
-                          >
-                            {formatTime(group.date)}
-                          </Divider>
+                            href={`/posts/${post.id}`}
+                          />
                         </Grid>
-                        {group.results.map((post) => (
-                          <Grid key={post.id} item xs={1}>
-                            <PostCard
-                              post={{
-                                ...post,
-                                price: post.price.toNumber(),
-                                colaborationCount: post._count.colaborations,
+                      ))}
+                    </>
+                  </Grid>
+                )}
+                <Grid container columns={2} spacing={2} px={1} pb={8}>
+                  {/* Old posts */}
+                  {resultGroups.old.length && (
+                    <>
+                      <Grid item xs={2} p={0}>
+                        <Typography variant="h6" textAlign="center">
+                          Publicaciones Antiguas
+                        </Typography>
+                      </Grid>
+                      {resultGroups.old.map((group) => (
+                        <Fragment key={group.date.getTime()}>
+                          <Grid item xs={2} mt={2} mb={2}>
+                            <Divider
+                              textAlign="center"
+                              sx={{
+                                fontWeight: "bold",
+                                textTransform: "capitalize",
+                                bgcolor: blue[100],
+                                mx: -1,
                               }}
-                              href={`/posts/${post.id}`}
-                            />
+                            >
+                              {formatTime(group.date)}
+                            </Divider>
                           </Grid>
-                        ))}
-                      </Fragment>
-                    ))}
+                          {group.results.map((post) => (
+                            <Grid key={post.id} item xs={1}>
+                              <PostCard
+                                post={{
+                                  ...post,
+                                  price: post.price.toNumber(),
+                                  colaborationCount: post._count.colaborations,
+                                }}
+                                href={`/posts/${post.id}`}
+                              />
+                            </Grid>
+                          ))}
+                        </Fragment>
+                      ))}
+                    </>
+                  )}
+                </Grid>
+              </>
+            ) : (
+              <Box
+                minHeight={200}
+                mx="auto"
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="center"
+              >
+                {searchQuery.isLoading ? (
+                  <CircularProgress />
+                ) : (
+                  <>
+                    <Typography
+                      textAlign="center"
+                      variant="h6"
+                      fontWeight="normal"
+                    >
+                      Sin resultados
+                    </Typography>
                   </>
                 )}
-              </Grid>
-            </>
-          ) : (
-            <Box
-              minHeight={200}
-              mx="auto"
-              display="flex"
-              flexDirection="column"
-              alignItems="center"
-              justifyContent="center"
-            >
-              {searchQuery.isLoading ? (
-                <CircularProgress />
-              ) : (
-                <>
-                  <Typography
-                    textAlign="center"
-                    variant="h6"
-                    fontWeight="normal"
-                  >
-                    Sin resultados
-                  </Typography>
-                </>
-              )}
-            </Box>
-          )}
-        </Box>
-      </Container>
-    </main>
+              </Box>
+            )}
+          </Box>
+        </Container>
+      </main>
+    </ProtectPage>
   );
 }
 

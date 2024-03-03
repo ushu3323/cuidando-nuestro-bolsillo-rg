@@ -8,13 +8,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { type GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useState, type FormEvent } from "react";
 import { NextLinkComposed } from "../components/NextLinkComposed";
 import PostCard from "../components/PostCard";
+import ProtectPage from "../components/Protected";
 import { type LayoutProps } from "../components/layout/Layout";
-import { getServerAuthSessionProps } from "../server/auth";
 import { api } from "../utils/api";
 
 export default function HomePage() {
@@ -77,40 +76,38 @@ export default function HomePage() {
   };
 
   return (
-    <main>
-      <Box p={2}>
-        <Box mb={7}>
-          <form onSubmit={handleSubmit}>
-            <TextField
-              id="search"
-              label="¿Que estas buscando?"
-              className="mb-5"
-              value={searchText}
-              onChange={(event) => setSearchText(event.target.value)}
-              fullWidth
-            />
-            <Button
-              variant="contained"
-              disabled={searchText.length === 0}
-              fullWidth
-              onClick={() => void router.push(`/search?query=${searchText}`)}
-            >
-              Buscar
-            </Button>
-          </form>
+    <ProtectPage>
+      <main>
+        <Box p={2}>
+          <Box mb={7}>
+            <form onSubmit={handleSubmit}>
+              <TextField
+                id="search"
+                label="¿Que estas buscando?"
+                className="mb-5"
+                value={searchText}
+                onChange={(event) => setSearchText(event.target.value)}
+                fullWidth
+              />
+              <Button
+                variant="contained"
+                disabled={searchText.length === 0}
+                fullWidth
+                onClick={() => void router.push(`/search?query=${searchText}`)}
+              >
+                Buscar
+              </Button>
+            </form>
+          </Box>
+          <Typography component="h2" variant="h5" fontWeight={700} gutterBottom>
+            Mejores ofertas de hoy
+          </Typography>
         </Box>
-        <Typography component="h2" variant="h5" fontWeight={700} gutterBottom>
-          Mejores ofertas de hoy
-        </Typography>
-      </Box>
-      <DailyPostsGrid />
-    </main>
+        <DailyPostsGrid />
+      </main>
+    </ProtectPage>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  return await getServerAuthSessionProps(ctx);
-};
 
 HomePage.layoutProps = {
   containerProps: { sx: { p: 0 } },

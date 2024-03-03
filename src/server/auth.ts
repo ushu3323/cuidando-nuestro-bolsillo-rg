@@ -63,7 +63,7 @@ export const authOptions: NextAuthOptions = {
         ...session.user,
         id: user.id,
         role: user.role,
-        TOSAccepted: user.TOSAccepted?.toISOString() ?? null, 
+        TOSAccepted: user.TOSAccepted,
       },
     }),
   },

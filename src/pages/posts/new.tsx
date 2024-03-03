@@ -1,7 +1,6 @@
 import { Box, Snackbar } from "@mui/material";
 import { TRPCClientError } from "@trpc/client";
 import { type FormikHelpers } from "formik";
-import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import {
@@ -9,8 +8,8 @@ import {
   type NewPostFormFields,
 } from "~/components/posts/NewPostForm";
 import { type AppRouter } from "~/server/api/root";
-import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/utils/api";
+import ProtectPage from "../../components/Protected";
 
 export default function NewPostPage() {
   const router = useRouter();
@@ -76,32 +75,16 @@ export default function NewPostPage() {
   const handleSnackbarClose = () => setShowSnackbar(false);
 
   return (
-    <Box sx={{ pt: 2 }}>
-      <NewPostForm onSubmit={handleOnSubmit} />
-      <Snackbar
-        open={showSnackbar}
-        message={snackbarMsg}
-        autoHideDuration={3500}
-        onClose={handleSnackbarClose}
-      />
-    </Box>
+    <ProtectPage>
+      <Box sx={{ pt: 2 }}>
+        <NewPostForm onSubmit={handleOnSubmit} />
+        <Snackbar
+          open={showSnackbar}
+          message={snackbarMsg}
+          autoHideDuration={3500}
+          onClose={handleSnackbarClose}
+        />
+      </Box>
+    </ProtectPage>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const session = await getServerAuthSession(ctx);
-  if (session) {
-    return {
-      props: {
-        session,
-      },
-    };
-  }
-
-  return {
-    redirect: {
-      destination: "/auth/login",
-      permanent: false,
-    },
-  };
-};

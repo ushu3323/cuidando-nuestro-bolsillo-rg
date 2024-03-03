@@ -25,6 +25,7 @@ import { useMemo, useState } from "react";
 import { type AppRouter } from "~/server/api/root";
 import { api, type RouterOutputs } from "~/utils/api";
 import { NextLinkComposed } from "../../components/NextLinkComposed";
+import ProtectPage from "../../components/Protected";
 
 type Data = RouterOutputs["product"]["getAll"][number];
 
@@ -181,33 +182,35 @@ export default function AdminProductsPage() {
   });
 
   return (
-    <main>
-      <Snackbar
-        open={snackbarOpen}
-        onClose={() => setSnackbarOpen(false)}
-        autoHideDuration={8000}
-        message={snackbarMsg}
-        anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
-      />
-      <Box py={2}>
-        <Breadcrumbs aria-label="breadcrumb">
-          <Link
-            underline="hover"
-            color="inherit"
-            component={NextLinkComposed}
-            to="/admin"
-          >
-            Admin
-          </Link>
-          <Typography color="text.primary">Productos</Typography>
-        </Breadcrumbs>
-        <Typography component="h1" variant="h4" gutterBottom>
-          Productos
-        </Typography>
-        <Box py={2} sx={{ width: "100%" }}>
-          <MaterialReactTable table={table} />
+    <ProtectPage>
+      <main>
+        <Snackbar
+          open={snackbarOpen}
+          onClose={() => setSnackbarOpen(false)}
+          autoHideDuration={8000}
+          message={snackbarMsg}
+          anchorOrigin={{ horizontal: "center", vertical: "bottom" }}
+        />
+        <Box py={2}>
+          <Breadcrumbs aria-label="breadcrumb">
+            <Link
+              underline="hover"
+              color="inherit"
+              component={NextLinkComposed}
+              to="/admin"
+            >
+              Admin
+            </Link>
+            <Typography color="text.primary">Productos</Typography>
+          </Breadcrumbs>
+          <Typography component="h1" variant="h4" gutterBottom>
+            Productos
+          </Typography>
+          <Box py={2} sx={{ width: "100%" }}>
+            <MaterialReactTable table={table} />
+          </Box>
         </Box>
-      </Box>
-    </main>
+      </main>
+    </ProtectPage>
   );
 }
