@@ -14,7 +14,7 @@ import { useEffect, useState } from "react";
 import { api } from "../utils/api";
 
 export default function AcceptTOSPage() {
-  const session = useSession();
+  const session = useSession({required: true});
   const router = useRouter();
   const [ready, setReady] = useState(false);
   const [open, setOpen] = useState(false);
@@ -24,13 +24,16 @@ export default function AcceptTOSPage() {
     api.user.acceptTOS.useMutation();
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setReady(true);
-    }, 500);
-    return () => {
-      clearTimeout(timeoutId);
-    };
-  });
+    if (session.status === "authenticated") {
+      if (session.data.user.TOSAccepted === null) {
+        setReady(true);
+      } else {
+        void router.replace("/") 
+      }
+    }
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session.status]);
 
   useEffect(() => {
     if (ready) {
