@@ -1,5 +1,5 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { type Role } from "@prisma/client";
+import { type User as DbUser, type Role } from "@prisma/client";
 import {
   type GetServerSidePropsContext,
   type GetServerSidePropsResult,
@@ -27,13 +27,14 @@ declare module "next-auth" {
     user: DefaultSession["user"] & {
       id: string;
       role: Role;
+      TOSAccepted: Date | null;
       // ...other properties
       // role: UserRole;
     };
   }
 
-  interface User {
-    role: Role;
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface User extends Pick<DbUser, "TOSAccepted" | "role"> {
     // ...other properties
     // role: UserRole;
   }
@@ -62,6 +63,7 @@ export const authOptions: NextAuthOptions = {
         ...session.user,
         id: user.id,
         role: user.role,
+        TOSAccepted: user.TOSAccepted?.toISOString() ?? null, 
       },
     }),
   },
@@ -96,14 +98,25 @@ export const getServerAuthSessionProps = async (ctx: {
 }): Promise<GetServerSidePropsResult<{ session: Session | null }>> => {
   const session = await getServerAuthSession(ctx);
   if (session) {
-    return {
-      props: { session },
-    };
+    // Check TOS
+    if (session.user.TOSAccepted !== null) {
+      return {
+        props: { session },
+      };
+    } else {
+      return {
+        props: { session },
+        redirect: {
+          permanent: false,
+          destination: `/accept-tos`
+        }
+      }
+    }
   }
 
   const originUrl = ctx.req.url;
   const callbackUrlParam = originUrl && `?callbackUrl=${originUrl}`;
-
+  console.log({ callbackUrlParam })
   return {
     props: { session },
     redirect: {

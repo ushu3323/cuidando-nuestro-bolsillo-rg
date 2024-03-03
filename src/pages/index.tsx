@@ -14,7 +14,7 @@ import { useState, type FormEvent } from "react";
 import { NextLinkComposed } from "../components/NextLinkComposed";
 import PostCard from "../components/PostCard";
 import { type LayoutProps } from "../components/layout/Layout";
-import { getServerAuthSession } from "../server/auth";
+import { getServerAuthSessionProps } from "../server/auth";
 import { api } from "../utils/api";
 
 export default function HomePage() {
@@ -109,21 +109,7 @@ export default function HomePage() {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const session = await getServerAuthSession(ctx);
-  if (session) {
-    return {
-      props: {
-        session,
-      },
-    };
-  }
-
-  return {
-    redirect: {
-      destination: "/auth/login",
-      permanent: false,
-    },
-  };
+  return await getServerAuthSessionProps(ctx);
 };
 
 HomePage.layoutProps = {

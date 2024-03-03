@@ -107,6 +107,15 @@ const isAuthenticated = t.middleware(async (opts) => {
   if (!ctx.session) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
+
+  const { user } = ctx.session;
+  if (user.TOSAccepted === null) {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: "TOS not accepted yet",
+    })
+  }
+
   return opts.next({
     ctx: {
       ...ctx,
