@@ -1,18 +1,19 @@
 "use client";
 import {
   AdminPanelSettings,
+  KeyboardArrowDown,
   List,
   Logout as LogoutIcon,
 } from "@mui/icons-material";
 import {
   Avatar,
+  Button,
   Divider,
-  IconButton,
   ListItem,
   ListItemIcon,
   ListItemText,
   Menu,
-  MenuItem,
+  MenuItem
 } from "@mui/material";
 import { type Session } from "next-auth";
 import { signOut } from "next-auth/react";
@@ -64,9 +65,17 @@ export default function AvatarMenu({ user }: { user: Session["user"] }) {
   const handleClose = () => setMenuOpen(false);
   return (
     <div>
-      <IconButton
+      <Button
         ref={anchorRef}
         size="large"
+        aria-expanded={menuOpen}
+        className="group"
+        classes={{
+          startIcon: "rotate-0 group-aria-expanded:rotate-180 duration-200"
+        }}
+        startIcon={
+          <KeyboardArrowDown />
+        }
         aria-label="cuenta del usuario actual"
         aria-controls="menu-appbar"
         aria-haspopup="true"
@@ -74,7 +83,7 @@ export default function AvatarMenu({ user }: { user: Session["user"] }) {
         color="inherit"
       >
         <Avatar alt={user.name ?? undefined} src={user.image ?? undefined} />
-      </IconButton>
+      </Button>
       <Menu
         id="menu-appbar"
         anchorEl={anchorRef.current}
