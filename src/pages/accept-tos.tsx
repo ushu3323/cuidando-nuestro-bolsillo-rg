@@ -25,7 +25,7 @@ export default function AcceptTOSPage() {
 
   useEffect(() => {
     if (session.status === "authenticated") {
-      if (session.data.user.TOSAccepted === null) {
+      if (!session.data.user.TOSAccepted) {
         setReady(true);
       } else {
         void router.replace("/") 

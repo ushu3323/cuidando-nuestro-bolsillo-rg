@@ -1,14 +1,13 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { type User as DbUser, type Role } from "@prisma/client";
 import {
-  type GetServerSidePropsContext,
-  type GetServerSidePropsResult,
+  GetServerSideProps,
+  type GetServerSidePropsContext
 } from "next";
 import {
   getServerSession,
   type DefaultSession,
-  type NextAuthOptions,
-  type Session,
+  type NextAuthOptions
 } from "next-auth";
 import FacebookProvider from "next-auth/providers/facebook";
 import GoogleProvider from "next-auth/providers/google";
@@ -27,7 +26,7 @@ declare module "next-auth" {
     user: DefaultSession["user"] & {
       id: string;
       role: Role;
-      TOSAccepted: Date | null;
+      TOSAccepted: string | null;
       // ...other properties
       // role: UserRole;
     };
@@ -63,7 +62,7 @@ export const authOptions: NextAuthOptions = {
         ...session.user,
         id: user.id,
         role: user.role,
-        TOSAccepted: user.TOSAccepted,
+        TOSAccepted: user.TOSAccepted?.toISOString(),
       },
     }),
   },
@@ -92,20 +91,20 @@ export const getServerAuthSession = (ctx: {
   return getServerSession(ctx.req, ctx.res, authOptions);
 };
 
-export const getServerAuthSessionProps = async (ctx: {
+export const getServerAuthSessionProps: GetServerSideProps = async (ctx: {
   req: GetServerSidePropsContext["req"];
   res: GetServerSidePropsContext["res"];
-}): Promise<GetServerSidePropsResult<{ session: Session | null }>> => {
+}) => {
   const session = await getServerAuthSession(ctx);
   if (session) {
-    // Check TOS
-    if (session.user.TOSAccepted !== null) {
+    if (session.user.TOSAccepted) {
       return {
-        props: { session },
+        props: {
+          session,
+        },
       };
     } else {
       return {
-        props: { session },
         redirect: {
           permanent: false,
           destination: `/accept-tos`

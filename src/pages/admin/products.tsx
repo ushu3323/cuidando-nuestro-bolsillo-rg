@@ -21,11 +21,13 @@ import {
   type MRT_Row,
   type MRT_TableOptions,
 } from "material-react-table";
+import { GetServerSideProps } from "next";
 import { useMemo, useState } from "react";
 import { type AppRouter } from "~/server/api/root";
 import { api, type RouterOutputs } from "~/utils/api";
 import { NextLinkComposed } from "../../components/NextLinkComposed";
 import ProtectPage from "../../components/Protected";
+import { getServerAuthSession } from "../../server/auth";
 
 type Data = RouterOutputs["product"]["getAll"][number];
 
@@ -214,3 +216,28 @@ export default function AdminProductsPage() {
     </ProtectPage>
   );
 }
+
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const session = await getServerAuthSession(ctx);
+  if (!session || session.user.role !== "ADMIN") {
+    return {
+      notFound: true
+    }
+  }
+
+  if (!session.user.TOSAccepted) {
+    return {
+      redirect: {
+        destination: "/accept-tos",
+        permanent: false,
+      }
+    }
+  }
+
+  return {
+    props: {
+      session,
+    }
+  }
+};

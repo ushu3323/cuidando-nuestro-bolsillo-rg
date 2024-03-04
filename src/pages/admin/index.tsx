@@ -6,12 +6,12 @@ import {
   Storefront,
 } from "@mui/icons-material";
 import { Box, Grid, Typography } from "@mui/material";
-import { GetServerSideProps } from "next";
+import { type GetServerSideProps } from "next";
 import StadisticCounterCard from "~/components/admin/StadisticCounterCard";
 import { type LayoutProps } from "~/components/layout/Layout";
+import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/utils/api";
 import ProtectPage from "../../components/Protected";
-import { getServerAuthSessionProps } from "../../server/auth";
 
 export default function AdminDashboardPage() {
   const { data: usersCount } = api.user.getCount.useQuery();
@@ -72,7 +72,27 @@ export default function AdminDashboardPage() {
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  return await getServerAuthSessionProps(ctx);
+  const session = await getServerAuthSession(ctx);
+  if (!session || session.user.role !== "ADMIN") {
+    return {
+      notFound: true
+    }
+  }
+
+  if (!session.user.TOSAccepted) {
+    return {
+      redirect: {
+        destination: "/accept-tos",
+        permanent: false,
+      }
+    }
+  }
+
+  return {
+    props: {
+      session,
+    }
+  }
 };
 
 AdminDashboardPage.layoutProps = {

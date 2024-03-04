@@ -13,7 +13,7 @@ export default function ProtectPage({ children }: PropsWithChildren) {
     } else if (status === "unauthenticated") {
       void router.replace("/auth/login");
     } else if (status === "authenticated") {
-      if (data.user.TOSAccepted !== null) {
+      if (data.user.TOSAccepted) {
         setAllow(true);
       } else {
         void router.replace("/accept-tos")
