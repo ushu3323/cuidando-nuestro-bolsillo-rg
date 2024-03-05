@@ -25,6 +25,8 @@ export default function ProtectPage({ children }: PropsWithChildren) {
     checkSession();
   }, [data, status])
 
+  console.log("render protected page")
+
   if (!allow) {
     return <LoadingPage />;
   }
