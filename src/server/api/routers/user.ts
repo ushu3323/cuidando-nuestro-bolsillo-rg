@@ -18,7 +18,7 @@ export const userRouter = createTRPCRouter({
           FROM "Session"
           WHERE "expires" >= TO_DATE(${now.toUTC().toISO()!}, 'YYYY-MM-DD"T"HH24:MI:SS')
           ORDER BY "userId", "expires" ASC
-      );`);
+      ) AS active_users;`);
       
     const count = result[0]?.count as bigint ?? BigInt(0);
     return +count.toString();
