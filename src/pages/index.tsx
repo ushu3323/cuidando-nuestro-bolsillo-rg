@@ -20,7 +20,7 @@ export default function HomePage() {
   const router = useRouter();
   const [searchText, setSearchText] = useState<string>("");
   const dailyQuery = api.post.getDailyBestOffers.useQuery();
-  const {data: connectedUsers, isLoading: isLoadingConnUsers} = api.user.getConnectedCount.useQuery();
+  const { data: usersCount, isLoading: isLoadingUsersCount } = api.user.getCount.useQuery();
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -81,7 +81,7 @@ export default function HomePage() {
       <main>
         <Box p={2}>
           <Box my={2}>
-          <Typography component="p" variant="h6" gutterBottom>Usuarios conectados: {isLoadingConnUsers ? "--" : connectedUsers }</Typography>
+          <Typography component="p" variant="h6" gutterBottom>Usuarios registrados: {isLoadingUsersCount ? "--" : usersCount }</Typography>
           </Box>
           <Box mb={7}>
             <form onSubmit={handleSubmit}>
