@@ -1,9 +1,43 @@
 import { TRPCError } from "@trpc/server";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { DateTime } from "luxon";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 export const userRouter = createTRPCRouter({
   getCount: publicProcedure.query(({ ctx }) => {
     return ctx.db.user.count();
+  }),
+  getTodayRanking: protectedProcedure.query(({ctx}) => {
+    const today = DateTime.now().setZone("UTC-3").startOf("day");
+
+    if (!today.isValid) {
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR"
+      })
+    }
+
+    return ctx.db.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        _count: {
+          select: {
+            posts: true,
+          }
+        }
+      },
+      where: {
+        posts: {
+          some: {
+            publishDate: {
+              gte: today.toUTC().toISO()
+            }
+          }
+        }
+      },
+      orderBy: [{posts: {_count: "desc"}}],
+      take: 5,
+    })
   }),
   acceptTOS: publicProcedure.mutation(async ({ ctx }) => {
     if (!ctx.session) {

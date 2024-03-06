@@ -1,10 +1,16 @@
 import { Add } from "@mui/icons-material";
 import {
+  Avatar,
   Box,
   Button,
   CircularProgress,
   Fab,
   Grid,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
   TextField,
   Typography,
 } from "@mui/material";
@@ -20,7 +26,10 @@ export default function HomePage() {
   const router = useRouter();
   const [searchText, setSearchText] = useState<string>("");
   const dailyQuery = api.post.getDailyBestOffers.useQuery();
-  const { data: usersCount, isLoading: isLoadingUsersCount } = api.user.getCount.useQuery();
+  const { data: usersCount, isLoading: isLoadingUsersCount } =
+    api.user.getCount.useQuery();
+  const { data: usersRanking, isLoading: isLoadingUsersRanking } =
+    api.user.getTodayRanking.useQuery();
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -76,14 +85,43 @@ export default function HomePage() {
     );
   };
 
+  const UsersRankingTable = () => {
+    return (
+      <Table sx={{my: 4}} size="small">
+        <TableHead>
+          <TableRow>
+            <TableCell></TableCell>
+            <TableCell>Puesto</TableCell>
+            <TableCell>Nombre</TableCell>
+            <TableCell>Publicaciones</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {usersRanking?.map(({id, image, name, _count: {posts: postsCount}}, i) => (
+            <TableRow key={id}>
+              <TableCell>
+                <Avatar sx={{w: 1, h: 1}}  src={image ?? undefined}/>
+              </TableCell>
+              <TableCell>{i + 1}</TableCell>
+              <TableCell>{name}</TableCell>
+              <TableCell>{postsCount}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    );
+  };
+
   return (
     <ProtectPage>
       <main>
         <Box p={2}>
           <Box my={2}>
-          <Typography component="p" variant="h6" gutterBottom>Usuarios registrados: {isLoadingUsersCount ? "--" : usersCount }</Typography>
+            <Typography component="p" variant="h6" gutterBottom>
+              Usuarios registrados: {isLoadingUsersCount ? "--" : usersCount}
+            </Typography>
           </Box>
-          <Box mb={7}>
+          <Box mb={5}>
             <form onSubmit={handleSubmit}>
               <TextField
                 id="search"
@@ -103,6 +141,7 @@ export default function HomePage() {
               </Button>
             </form>
           </Box>
+          <UsersRankingTable />
           <Typography component="h2" variant="h5" fontWeight={700} gutterBottom>
             Mejores ofertas de hoy
           </Typography>
