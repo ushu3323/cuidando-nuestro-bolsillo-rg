@@ -16,13 +16,16 @@ export const userRouter = createTRPCRouter({
     }
 
     return ctx.db.user.findMany({
-      select: {
-        id: true,
-        name: true,
-        image: true,
+      include: {
         _count: {
           select: {
-            posts: true,
+            posts: {
+              where: {
+                publishDate: {
+                  gte: today.toUTC().toISO(),
+                }
+              }
+            }
           }
         }
       },
@@ -30,7 +33,7 @@ export const userRouter = createTRPCRouter({
         posts: {
           some: {
             publishDate: {
-              gte: today.toUTC().toISO()
+              gte: today.toUTC().toISO(),
             }
           }
         }
