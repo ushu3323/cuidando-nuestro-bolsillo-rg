@@ -41,7 +41,7 @@ export default function AvatarMenu({ user }: { user: Session["user"] }) {
         label: "Mi Lista de compras",
         icon: <List />,
         command: () => {
-          void router.push("/shoplist").finally(() => setMenuOpen(false));
+          void router.push("/my/shoplist").finally(() => setMenuOpen(false));
         },
       },
       ...iif<MenuOption>(user.role === "ADMIN", {

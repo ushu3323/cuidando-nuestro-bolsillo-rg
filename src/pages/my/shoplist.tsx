@@ -24,9 +24,9 @@ import { type LayoutProps } from "~/components/layout/Layout";
 import useShoplist from "~/hooks/useShoplist";
 import { type ShoplistItem } from "~/providers/shoplistProvider";
 import { getServerAuthSessionProps } from "~/server/auth";
-import ProtectPage from "../components/Protected";
+import ProtectPage from "../../components/Protected";
 
-export default function ShoplistPage() {
+export default function MyShoplistPage() {
   const { data: session, status } = useSession({ required: true });
   const shoplist = useShoplist();
   const router = useRouter();
@@ -161,7 +161,7 @@ export default function ShoplistPage() {
   );
 }
 
-ShoplistPage.layoutProps = {
+MyShoplistPage.layoutProps = {
   showHeader: false,
   containerProps: {
     disableGutters: true,
