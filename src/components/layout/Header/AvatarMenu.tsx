@@ -4,6 +4,7 @@ import {
   KeyboardArrowDown,
   List,
   Logout as LogoutIcon,
+  PhotoLibrary as PhotoLibraryIcon
 } from "@mui/icons-material";
 import {
   Avatar,
@@ -37,6 +38,13 @@ export default function AvatarMenu({ user }: { user: Session["user"] }) {
     }
 
     return [
+      {
+        label: "Mis publicaciones",
+        icon: <PhotoLibraryIcon />,
+        command: () => {
+          void router.push("/my/posts").finally(() => setMenuOpen(false));
+        },
+      },
       {
         label: "Mi Lista de compras",
         icon: <List />,

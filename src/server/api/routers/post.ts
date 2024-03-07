@@ -299,4 +299,58 @@ export const postRouter = createTRPCRouter({
         },
       });
     }),
+  deleteOwnPost: protectedProcedure
+    .input(z.object({
+      id: z.string().uuid(),
+    })).mutation(async ({ ctx, input }) => {
+      const { user } = ctx.session
+
+      const post = await ctx.db.post.findUnique({
+        where: {
+          id: input.id
+        }
+      })
+
+      if(!post) {
+        throw new TRPCError({
+          code: "NOT_FOUND"
+        })
+      }
+
+      if(post.authorId !== user.id) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "No eres el autor de la publicación"
+        })
+      }
+
+      return ctx.db.post.delete({
+        where: {
+          id: input.id
+        }
+      })
+    }),
+  getOwnPosts: protectedProcedure.query(({ ctx }) => {
+    const { user } = ctx.session
+    return ctx.db.post.findMany({
+      where: {
+        authorId: user.id,
+      },
+      select: {
+        id: true,
+        product: {
+          include: { category: true }
+        },
+        commerce: true,
+        price: true,
+        publishDate: true,
+        image: true,
+        author: true,
+        colaborations: true,
+      },
+      orderBy: {
+        publishDate: "desc",
+      }
+    })
+  }),
 });
