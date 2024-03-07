@@ -107,13 +107,16 @@ export default function MyPostsPage() {
       {
         accessorKey: "image",
         header: "Imagen",
+        maxSize: 100,
         Cell: ({ row }) => (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={row.original.image}
-            alt={row.original.product.name}
-            height={100}
-          />
+          <Box display="flex" justifyContent="center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={row.original.image}
+              alt={row.original.product.name}
+              height={50}
+            />
+          </Box>
         ),
       },
       {
