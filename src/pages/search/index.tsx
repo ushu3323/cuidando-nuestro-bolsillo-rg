@@ -28,28 +28,6 @@ import PostCard from "../../components/PostCard";
 import ProtectPage from "../../components/Protected";
 import SearchInputDialog from "../../components/SearchInputDialog";
 
-const rtf = new Intl.RelativeTimeFormat("es", {
-  style: "long",
-  numeric: "auto",
-});
-
-function formatTime(date: Date): string {
-  const now = new Date();
-  const elapsed = date.getTime() - now.getTime();
-  const daysElapsed = Math.ceil(elapsed / (24 * 60 * 60 * 1000));
-  if (daysElapsed > -2) {
-    return `${date.toLocaleDateString(undefined, {
-      weekday: "long",
-      day: "2-digit",
-    })} (${rtf.format(daysElapsed, "days")})`;
-  } else {
-    return date.toLocaleDateString(undefined, {
-      weekday: "long",
-      day: "2-digit",
-    });
-  }
-}
-
 export default function SearchPage() {
   const { data: session, status } = useSession({ required: true });
   const router = useRouter();
@@ -205,7 +183,7 @@ export default function SearchPage() {
                             mx: -1,
                           }}
                         >
-                          {formatTime(resultGroups.today.date)}
+                          {resultGroups.today.date.toLocaleDateString("es-AR")}
                         </Divider>
                       </Grid>
                       {resultGroups.today.results.map((post) => (
@@ -244,7 +222,7 @@ export default function SearchPage() {
                                 mx: -1,
                               }}
                             >
-                              {formatTime(group.date)}
+                              {group.date.toLocaleDateString("es-AR")}
                             </Divider>
                           </Grid>
                           {group.results.map((post) => (
