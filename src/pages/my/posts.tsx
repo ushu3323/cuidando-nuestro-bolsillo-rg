@@ -73,7 +73,7 @@ export default function MyPostsPage() {
 
   const [snackbar, setSnackbar] = useState({
     message: "",
-    open: true,
+    open: false,
     persistent: false,
   });
 
@@ -190,7 +190,11 @@ export default function MyPostsPage() {
         <Snackbar
           open={snackbar.open}
           onClose={() =>
-            setSnackbar({ message: "", open: false, persistent: false })
+            setSnackbar(({ message }) => ({
+              message,
+              open: false,
+              persistent: false,
+            }))
           }
           message={snackbar.message}
           autoHideDuration={snackbar.persistent ? null : 5000}
