@@ -6,9 +6,11 @@ import {
   CircularProgress,
   Fab,
   Grid,
+  Paper,
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
   TableRow,
   TextField,
@@ -87,28 +89,42 @@ export default function HomePage() {
 
   const UsersRankingTable = () => {
     return (
-      <Table sx={{my: 4}} size="small">
-        <TableHead>
-          <TableRow>
-            <TableCell></TableCell>
-            <TableCell>Puesto</TableCell>
-            <TableCell>Nombre</TableCell>
-            <TableCell>Publicaciones</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {usersRanking?.map(({id, image, name, _count: {posts: postsCount}}, i) => (
-            <TableRow key={id}>
-              <TableCell>
-                <Avatar sx={{w: 1, h: 1}}  src={image ?? undefined}/>
+      <TableContainer component={Paper} sx={{ mb: 4 }}>
+        <Typography variant="h6" component="div" p={2} align="center">
+          Ranking de colaboraciones diarias
+        </Typography>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell align="center" padding="checkbox">
+                Puesto
               </TableCell>
-              <TableCell>{i + 1}</TableCell>
-              <TableCell>{name}</TableCell>
-              <TableCell>{postsCount}</TableCell>
+              <TableCell
+                align="center"
+                width={2}
+                padding="checkbox"
+              ></TableCell>
+              <TableCell>Nombre</TableCell>
+              <TableCell align="center">Aportes</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHead>
+          <TableBody>
+            {usersRanking?.map(({ id, image, name, postsCount }, i) => (
+              <TableRow key={id}>
+                <TableCell align="center">{i + 1}</TableCell>
+                <TableCell>
+                  <Avatar
+                    sx={{ width: 24, height: 24 }}
+                    src={image ?? undefined}
+                  />
+                </TableCell>
+                <TableCell>{name}</TableCell>
+                <TableCell align="center">{postsCount}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     );
   };
 
@@ -116,11 +132,6 @@ export default function HomePage() {
     <ProtectPage>
       <main>
         <Box p={2}>
-          <Box my={2}>
-            <Typography component="p" variant="h6" gutterBottom>
-              Usuarios registrados: {isLoadingUsersCount ? "--" : usersCount}
-            </Typography>
-          </Box>
           <Box mb={5}>
             <form onSubmit={handleSubmit}>
               <TextField
@@ -140,6 +151,11 @@ export default function HomePage() {
                 Buscar
               </Button>
             </form>
+          </Box>
+          <Box my={2}>
+            <Typography component="p" variant="h6" gutterBottom>
+              Usuarios registrados: {isLoadingUsersCount ? "--" : usersCount}
+            </Typography>
           </Box>
           <UsersRankingTable />
           <Typography component="h2" variant="h5" fontWeight={700} gutterBottom>

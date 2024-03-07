@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import { DateTime } from "luxon";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
@@ -15,29 +16,19 @@ export const userRouter = createTRPCRouter({
       })
     }
 
-    return ctx.db.user.findMany({
-      select: {
-        id: true,
-        name: true,
-        image: true,
-        _count: {
-          select: {
-            posts: true,
-          }
-        }
-      },
-      where: {
-        posts: {
-          some: {
-            publishDate: {
-              gte: today.toUTC().toISO()
-            }
-          }
-        }
-      },
-      orderBy: [{posts: {_count: "desc"}}],
-      take: 5,
-    })
+    return ctx.db.$queryRaw<{
+      id: string,
+      name: string,
+      image: string,
+      postsCount: number,
+    }[]>(Prisma.sql`
+      SELECT "User"."id", "User"."name", "User"."image", CAST(COUNT(*) AS INTEGER) "postsCount"
+      FROM "Post"
+      INNER JOIN "User" ON ("User".id = "Post"."authorId")  
+      WHERE "publishDate" >= ${today.toUTC().toISO()}::date
+      GROUP BY "User".id
+      ORDER BY "postsCount" DESC;
+    `)
   }),
   acceptTOS: publicProcedure.mutation(async ({ ctx }) => {
     if (!ctx.session) {
