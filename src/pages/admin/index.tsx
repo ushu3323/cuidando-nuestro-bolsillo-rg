@@ -47,6 +47,7 @@ export default function AdminDashboardPage() {
                 label="Comercios"
                 icon={<Storefront sx={{ fontSize: "calc(2.5rem + 2vw)" }} />}
                 value={commercesCount}
+                href="/admin/commerces"
               />
             </Grid>
             <Grid item xs={2} md={1}>
