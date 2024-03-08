@@ -26,7 +26,7 @@ import { useMemo, useState } from "react";
 import { type AppRouter } from "~/server/api/root";
 import { api, type RouterOutputs } from "~/utils/api";
 import { NextLinkComposed } from "../../components/NextLinkComposed";
-import ProtectPage from "../../components/Protected";
+import ProtectPage from "../../components/ProtectPage";
 import { getServerAuthSession } from "../../server/auth";
 
 type Data = RouterOutputs["product"]["getAll"][number];

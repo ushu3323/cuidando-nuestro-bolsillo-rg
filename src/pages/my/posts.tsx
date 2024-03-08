@@ -24,7 +24,7 @@ import { MRT_Localization_ES } from "material-react-table/locales/es";
 import { useSession } from "next-auth/react";
 import router from "next/router";
 import { useMemo, useState } from "react";
-import ProtectPage from "~/components/Protected";
+import ProtectPage from "~/components/ProtectPage";
 import AvatarMenu from "~/components/layout/Header/AvatarMenu";
 import { type LayoutProps } from "~/components/layout/Layout";
 import { api, type RouterOutputs } from "~/utils/api";

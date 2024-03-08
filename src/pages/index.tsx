@@ -20,7 +20,7 @@ import { useRouter } from "next/router";
 import { useState, type FormEvent } from "react";
 import { NextLinkComposed } from "../components/NextLinkComposed";
 import PostCard from "../components/PostCard";
-import ProtectPage from "../components/Protected";
+import ProtectPage from "../components/ProtectPage";
 import { type LayoutProps } from "../components/layout/Layout";
 import { api } from "../utils/api";
 

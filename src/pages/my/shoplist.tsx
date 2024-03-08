@@ -24,7 +24,7 @@ import { type LayoutProps } from "~/components/layout/Layout";
 import useShoplist from "~/hooks/useShoplist";
 import { type ShoplistItem } from "~/providers/shoplistProvider";
 import { getServerAuthSessionProps } from "~/server/auth";
-import ProtectPage from "../../components/Protected";
+import ProtectPage from "../../components/ProtectPage";
 
 export default function MyShoplistPage() {
   const { data: session, status } = useSession({ required: true });

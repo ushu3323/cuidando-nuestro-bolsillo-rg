@@ -9,7 +9,7 @@ import {
 } from "~/components/posts/NewPostForm";
 import { type AppRouter } from "~/server/api/root";
 import { api } from "~/utils/api";
-import ProtectPage from "../../components/Protected";
+import ProtectPage from "../../components/ProtectPage";
 
 export default function NewPostPage() {
   const router = useRouter();

@@ -11,7 +11,7 @@ import StadisticCounterCard from "~/components/admin/StadisticCounterCard";
 import { type LayoutProps } from "~/components/layout/Layout";
 import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/utils/api";
-import ProtectPage from "../../components/Protected";
+import ProtectPage from "../../components/ProtectPage";
 
 export default function AdminDashboardPage() {
   const { data: usersCount } = api.user.getCount.useQuery();

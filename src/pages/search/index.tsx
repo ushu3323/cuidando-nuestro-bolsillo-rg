@@ -25,7 +25,7 @@ import AvatarMenu from "~/components/layout/Header/AvatarMenu";
 import { type LayoutProps } from "~/components/layout/Layout";
 import { api, type RouterOutputs } from "~/utils/api";
 import PostCard from "../../components/PostCard";
-import ProtectPage from "../../components/Protected";
+import ProtectPage from "../../components/ProtectPage";
 import SearchInputDialog from "../../components/SearchInputDialog";
 
 export default function SearchPage() {

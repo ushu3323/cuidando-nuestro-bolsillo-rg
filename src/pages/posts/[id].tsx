@@ -29,7 +29,7 @@ import AvatarMenu from "~/components/layout/Header/AvatarMenu";
 import { type LayoutProps } from "~/components/layout/Layout";
 import useShoplist from "~/hooks/useShoplist";
 import { api } from "~/utils/api";
-import ProtectPage from "../../components/Protected";
+import ProtectPage from "../../components/ProtectPage";
 
 export default function PostDetailsPage() {
   const shoplist = useShoplist();
