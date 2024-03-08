@@ -67,8 +67,7 @@ export default function AdminCommercesPage() {
           address: values.address as string,
         });
         table.setCreatingRow(null);
-        await apiUtils.product.getAll.invalidate();
-        table.setPageIndex(table.getPageCount() - 1);
+        await apiUtils.commerce.getAll.invalidate();
       } catch (error) {
         if (error instanceof TRPCClientError) {
           setSnackbarMessage(error.message);
