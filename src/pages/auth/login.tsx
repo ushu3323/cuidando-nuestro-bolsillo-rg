@@ -1,4 +1,12 @@
-import { Box, Container, Snackbar, Stack, Typography } from "@mui/material";
+import {
+  Alert,
+  AlertTitle,
+  Box,
+  Container,
+  Snackbar,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
@@ -71,9 +79,20 @@ export default function LoginPage() {
         marginTop={3}
         justifyContent="center"
       >
-        <FacebookButton callbackUrl={callbackUrl} />
+        <FacebookButton callbackUrl={callbackUrl} disabled />
         <GoogleButton callbackUrl={callbackUrl} />
       </Stack>
+      <Alert severity="info" className="mt-5">
+        <AlertTitle className="font-bold">Atención</AlertTitle>
+        La opción para acceder mediante Facebook estará deshabilitada{" "}
+        <strong>hasta nuevo aviso</strong> debido a que aún no está configurada
+        para soportar múltiples usuarios. Este inconveniente está siendo
+        investigado. Mientras tanto, puede acceder con una cuenta
+        de Google. Disculpe las molestias ocasionadas y muchas gracias por probar la aplicación.
+        <br />
+        <br />
+        - Matias, Desarrollador de Precios RG
+      </Alert>
       <Snackbar
         message={snackbarOpts.message}
         open={snackbarOpts.show}

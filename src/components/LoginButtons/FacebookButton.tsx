@@ -11,8 +11,10 @@ const LoadingStyledButton = styled(LoadingButton)<LoadingButtonProps>(() => ({
 
 export default function FacebookButton({
   callbackUrl,
+  disabled = false,
 }: {
   callbackUrl?: string;
+  disabled?: boolean
 }) {
   const [loading, setLoading] = useState(false);
 
@@ -30,6 +32,7 @@ export default function FacebookButton({
       loadingPosition="start"
       startIcon={<FacebookIcon />}
       onClick={trySignIn}
+      disabled={disabled}
     >
       Acceder con Facebook
     </LoadingStyledButton>
