@@ -1,9 +1,10 @@
 import { Container } from "@mui/material";
+import { type LayoutProps } from "../components/layout/Layout";
 
 export default function TermsAndConditionsUsagePage() {
   return (
     <main>
-      <Container maxWidth="sm" className="mb-10">
+      <Container maxWidth="md" className="mb-10">
         <h1 className="mb-2">Terminos y Condiciones de Uso</h1>
         <h2 className="mb-8 mt-0 text-base">
           Ultima actualización: 25/02/2024
@@ -97,3 +98,10 @@ export default function TermsAndConditionsUsagePage() {
     </main>
   );
 }
+
+TermsAndConditionsUsagePage.layoutProps = {
+  containerProps: {
+    maxWidth: false,
+    disableGutters: true,
+  }
+} satisfies LayoutProps
