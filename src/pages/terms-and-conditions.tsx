@@ -54,16 +54,6 @@ export default function TermsAndConditionsUsagePage() {
           aplicación.
         </p>
 
-        <h3>4. Propiedad Intelectual</h3>
-        <p className="mb-8 text-justify">
-          Todos los derechos de propiedad intelectual sobre la aplicación y su
-          contenido son propiedad de &quot;Precios RG&quot; o de sus
-          licenciantes. Al compartir información en la aplicación, otorgas a
-          nuestra empresa una licencia para usar, reproducir, modificar y
-          distribuir dicha información de acuerdo con los propósitos de la
-          aplicación.
-        </p>
-
         <h3>5. Privacidad y Protección de Datos Personales</h3>
         <p className="mb-8 text-justify">
           Nos comprometemos a proteger la privacidad y seguridad de tus datos
