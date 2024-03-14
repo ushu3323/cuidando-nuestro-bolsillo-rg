@@ -17,7 +17,7 @@ export default function TermsAndConditionsUsagePage() {
         </p>
 
         <h3>1. Aceptación de los Términos y Condiciones</h3>
-        <p className="mb-8 text-justify">
+        <p className="mb-12 text-justify">
           Al acceder y utilizar &quot;Precios RG&quot;, aceptas cumplir con
           estos términos y condiciones, así como con todas las leyes y
           regulaciones aplicables en Argentina. Si no estás de acuerdo con
@@ -26,7 +26,7 @@ export default function TermsAndConditionsUsagePage() {
         </p>
 
         <h3>2. Registro y Cuenta de Usuario</h3>
-        <p className="mb-8 text-justify">
+        <p className="mb-12 text-justify">
           Para utilizar ciertas funciones de la aplicación, puede que necesites
           registrarte y crear una cuenta de usuario. Al registrarte, aceptas
           proporcionar información precisa, actualizada y completa sobre ti
@@ -36,7 +36,7 @@ export default function TermsAndConditionsUsagePage() {
         </p>
 
         <h3>3. Responsabilidad del Usuario</h3>
-        <p className="mb-8 text-justify">
+        <p className="mb-12 text-justify">
           Tú eres el único responsable de la información que ingreses en la
           aplicación. Asegúrate de verificar la precisión y veracidad de los
           precios y demás información que compartas. &quot;Precios RG&quot; no
@@ -45,7 +45,7 @@ export default function TermsAndConditionsUsagePage() {
         </p>
 
         <h3>4. Propiedad Intelectual</h3>
-        <p className="mb-8 text-justify">
+        <p className="mb-12 text-justify">
           Todos los derechos de propiedad intelectual sobre la aplicación y su
           contenido son propiedad de &quot;Precios RG&quot; o de sus
           licenciantes. Al compartir información en la aplicación, otorgas a
@@ -55,7 +55,7 @@ export default function TermsAndConditionsUsagePage() {
         </p>
 
         <h3>5. Privacidad y Protección de Datos Personales</h3>
-        <p className="mb-8 text-justify">
+        <p className="mb-12 text-justify">
           Nos comprometemos a proteger la privacidad y seguridad de tus datos
           personales de acuerdo con la Ley de Protección de Datos Personales
           (Ley 25.326) y sus normativas complementarias. Al utilizar nuestra
@@ -64,7 +64,7 @@ export default function TermsAndConditionsUsagePage() {
         </p>
 
         <h3>6. Limitación de Responsabilidad</h3>
-        <p className="mb-8 text-justify">
+        <p className="mb-12 text-justify">
           En la medida máxima permitida por la ley, &quot;Precios RG&quot; no
           será responsable por daños directos, indirectos, incidentales,
           especiales, consecuentes o ejemplares, incluyendo, pero no limitado a,
@@ -73,7 +73,7 @@ export default function TermsAndConditionsUsagePage() {
         </p>
 
         <h3>7. Ley Aplicable y Jurisdicción</h3>
-        <p className="mb-8 text-justify">
+        <p className="mb-12 text-justify">
           Estos términos y condiciones se regirán e interpretarán de acuerdo con
           las leyes de la República Argentina. Cualquier disputa relacionada con
           estos términos y condiciones estará sujeta a la jurisdicción exclusiva
@@ -81,7 +81,7 @@ export default function TermsAndConditionsUsagePage() {
         </p>
 
         <h3>8. Modificaciones de los Términos y Condiciones</h3>
-        <p className="mb-8 text-justify">
+        <p className="mb-12 text-justify">
           Nos reservamos el derecho de modificar estos términos y condiciones en
           cualquier momento sin previo aviso. Los cambios entrarán en vigencia
           en el momento de su publicación en la aplicación.
